@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Init Tournament{% endblock %}
+
+{% block body %}
+    <h1>Init Tournament</h1>
+    <div {{ stimulus_controller('form-collection') }}
+            data-form-collection-index-value="{{ form.teams|length > 0 ? form.teams|last.vars.name + 1 : 0 }}"
+            data-form-collection-prototype-value="{{ form_widget(form.teams.vars.prototype)|e('html_attr') }}"
+            class="container-fluid"
+    >
+    <button class="btn btn-outline-primary" type="button" {{ stimulus_action('form-collection', 'addTeamCollectionElement') }}>Add a team</button>
+    {{ form_start(form) }}
+        <ul {{ stimulus_target('form-collection', 'collectionContainer') }} id="team-tournament-list" class="row pt-2" style="list-style: none"></ul>
+        {{ form_widget(form.save) }}
+    </div>
+    {{ form_end(form) }}
+    <a href="{{ path('app_tournament_index') }}">back to list</a>
+{% endblock %}

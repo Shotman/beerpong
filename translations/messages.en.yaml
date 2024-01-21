@@ -1,0 +1,45 @@
+tournament:
+  tournaments: Tournaments
+  list: Tournament list
+  gameName: Game
+  name: Tournament name
+  date: Date
+  championship: Championship
+  championship_placeholder: 'Championship (optional)'
+  challonge: "Challonge tournament"
+  none: No tournament
+btn:
+  create: Create
+  start: Start
+  show: Show
+  cancel: Cancel
+  save: Save
+  delete: Delete
+  edit: Edit
+  add: Add
+  remove: Remove
+  back: Back
+  next: Next
+  previous: Previous
+  finish: Finish
+  close: Close
+  ok: OK
+  yes: Yes
+  no: No
+  confirm: Confirm
+  reset: Reset
+  refresh: Refresh
+  search: Search
+  filter: Filter
+  clear: Clear
+  select: Select
+  deselect: Deselect
+  upload: Upload
+  download: Download
+  copy: Copy
+  paste: Paste
+  cut: Cut
+  undo: Undo
+
+
+

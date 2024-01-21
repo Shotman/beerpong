@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Repository;
+
+use App\Entity\Championship;
+use App\Entity\Player;
+use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
+
+/**
+ * @extends ServiceEntityRepository<Player>
+ *
+ * @method Player|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Player|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Player[]    findAll()
+ * @method Player[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ */
+class PlayerRepository extends ServiceEntityRepository
+{
+    public function __construct(ManagerRegistry $registry)
+    {
+        parent::__construct($registry, Player::class);
+    }
+
+    //save method
+    public function save(Player $player): void
+    {
+        $this->_em->persist($player);
+        $this->_em->flush();
+    }
+
+    public function getAllPlayerByChampionShip(?Championship $championship)
+    {
+        $q = $this->createQueryBuilder('p')
+            ->select('p')
+            ->distinct()
+            ->join('p.tournamentResults', 'tr')
+            ->join('tr.tournament', 't');
+        if ($championship === null) {
+            $q->where('t.championship IS NULL');
+        } else {
+            $q->join('t.championship', 'c');
+            $q->where('c.id = :championship')
+                ->setParameter('championship', $championship);
+        }
+        return $q->getQuery()->getResult();
+    }
+
+//    /**
+//     * @return Player[] Returns an array of Player objects
+//     */
+//    public function findByExampleField($value): array
+//    {
+//        return $this->createQueryBuilder('p')
+//            ->andWhere('p.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->orderBy('p.id', 'ASC')
+//            ->setMaxResults(10)
+//            ->getQuery()
+//            ->getResult()
+//        ;
+//    }
+
+//    public function findOneBySomeField($value): ?Player
+//    {
+//        return $this->createQueryBuilder('p')
+//            ->andWhere('p.exampleField = :val')
+//            ->setParameter('val', $value)
+//            ->getQuery()
+//            ->getOneOrNullResult()
+//        ;
+//    }
+}

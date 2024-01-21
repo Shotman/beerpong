@@ -1,0 +1,6 @@
+{% if id is defined %}
+{% set idToDelete = id %}
+{% else %}
+{% set idToDelete = form.vars.data.id %}
+{% endif %}
+<a class="btn btn-danger" hx-headers='{"X-CSRFToken": "{{ csrf_token('delete'~idToDelete) }}"}') hx-delete="{{ path('app_tournament_delete', {id: idToDelete}) }}" hx-confirm="Are you sure?">{{ "btn.delete"|trans }}</a>

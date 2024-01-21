@@ -1,0 +1,43 @@
+tournament:
+  tournaments: Les tournois
+  list: Liste des tournois
+  gameName: Jeu
+  name: Nom du tournois
+  date: Date
+  championship: Championnat
+  championship_placeholder: 'Championnat (facultatif)'
+  actions: Actions
+  challonge: "Tournois challonge"
+  none: Aucun tournois
+btn:
+  create: Créer
+  start: Démarrer
+  show: Afficher
+  cancel: Annuler
+  save: Enregistrer
+  delete: Supprimer
+  edit: Éditer
+  add: Ajouter
+  remove: Supprimer
+  back: Retour
+  next: Suivant
+  previous: Précédent
+  finish: Terminer
+  close: Fermer
+  ok: OK
+  yes: Oui
+  no: Non
+  confirm: Confirmer
+  reset: Réinitialiser
+  refresh: Actualiser
+  search: Rechercher
+  filter: Filtrer
+  clear: Effacer
+  select: Sélectionner
+  deselect: Désélectionner
+  upload: Téléverser
+  download: Télécharger
+  copy: Copier
+  paste: Coller
+  cut: Couper
+  undo: Annuler
