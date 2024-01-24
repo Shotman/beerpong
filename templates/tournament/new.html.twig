@@ -3,10 +3,10 @@
 {% block title %}New Tournament{% endblock %}
 
 {% block body %}
+    <section class="bg-body-secondary col-md-6 p-3">
     <h1>Créer un tournois</h1>
-
-    <div class="container w-75">
+    <div>
         {{ include('tournament/_form.html.twig') }}
     </div>
-
+    </section>
 {% endblock %}

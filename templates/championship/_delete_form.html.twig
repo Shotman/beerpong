@@ -1,4 +1,6 @@
-<form method="post" action="{{ path('app_championship_delete', {'id': championship.id}) }}" onsubmit="return confirm('Are you sure you want to delete this item?');">
-    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ championship.id) }}">
-    <button class="btn">Delete</button>
-</form>
+{% if id is defined %}
+    {% set idToDelete = id %}
+{% else %}
+    {% set idToDelete = form.vars.data.id %}
+{% endif %}
+<a class="btn btn-danger" hx-headers='{"X-CSRFToken": "{{ csrf_token('delete'~idToDelete) }}"}') hx-delete="{{ path('app_championship_delete', {id: idToDelete}) }}" hx-confirm="Voulez-vous supprimer ce championnat ?">{{ "btn.delete"|trans }}</a>

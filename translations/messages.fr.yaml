@@ -9,6 +9,20 @@ tournament:
   actions: Actions
   challonge: "Tournois challonge"
   none: Aucun tournois
+  addTeam: Ajouter une équipe
+  player1: Joueur 1
+  player2: Joueur 2
+  selectPlayer: Sélectionner ou saisissez un joueur
+championship:
+  championships: Les championnats
+  date_start: Date de début
+  date_end: Date de fin
+  list: Liste des championnats
+  gameName: Jeu
+  name: Nom du championnat
+  date: Date
+  actions: Actions
+  none: Aucun championnat
 btn:
   create: Créer
   start: Démarrer
@@ -41,3 +55,5 @@ btn:
   paste: Coller
   cut: Couper
   undo: Annuler
+confirm:
+  sureDelete: Êtes-vous sûr de vouloir supprimer ceci?

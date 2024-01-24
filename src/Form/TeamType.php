@@ -26,35 +26,46 @@ class TeamType extends AbstractType
             'choice_value' => 'name', // default is 'id
             'choice_label' => 'name',
             'allow_extra_fields' => true,
-            'label' => 'Player 1',
-            'placeholder' => 'Select a player',
+            'label' => 'tournament.player1',
+            'placeholder' => 'tournament.selectPlayer',
             'required' => true,
             'autocomplete' => true,
             'by_reference' => false,
+            'translation_domain' => 'messages',
             'tom_select_options' => [
                 'create' => true,
-                'createOnBlur' => true
-            ]
+                'createOnBlur' => true,
+                'closeAfterSelect' => true,
+            ],
+            'attr' => [
+                'data-controller' => 'custom-autocomplete',
+            ],
         ])
         ->add('player2',EntityType::class,[
             'class' => 'App\Entity\Player',
             'choice_value' => 'name', // default is 'id
             'choice_label' => 'name',
+            'translation_domain' => 'messages',
             'allow_extra_fields' => true,
-            'label' => 'Player 2',
-            'placeholder' => 'Select a player',
+            'label' => 'tournament.player2',
+            'placeholder' => 'tournament.selectPlayer',
             'required' => false,
             'by_reference' => false,
             'autocomplete' => true,
             'tom_select_options' => [
                 'create' => true,
                 'createOnBlur' => true,
-            ]
+                'closeAfterSelect' => true,
+            ],
+            'attr' => [
+                'data-controller' => 'custom-autocomplete',
+            ],
         ])
         ;
         if($options['allow_delete']){
             $builder->add('delete',ButtonType::class,[
-                'label' => 'Delete',
+                'translation_domain' => 'messages',
+                'label' => 'btn.delete',
                 'attr' => [
                     'class' => 'btn btn-danger stimulus-delete',
                 ]

@@ -1,15 +1,23 @@
 import './bootstrap.js';
 
 //3rd party libraries
-import 'bootstrap'
-import bootbox from 'bootbox'
+import { Modal as bsModal } from 'bootstrap'
+import { alert, confirm, toast, prompt, message, load, i18n } from "@ymlluo/bs5dialog/dist/bs5dialog.js";
 import { Datepicker } from 'vanillajs-datepicker';
 import fr from 'vanillajs-datepicker/locales/fr';
 import htmx from 'htmx.org';
-import Message from "./js/prophet.min.js";
 window.htmx = htmx
-window.bootbox = bootbox
-window.Message = Message
+window.modal = bsModal;
+window.bsAlert = alert;
+window.bsConfirm = confirm;
+window.bsToast = toast;
+window.bsPrompt = prompt;
+window.bsMessage = message;
+window.bsLoad = load;
+i18n.setCurrentLang('fr');
+
+
+
 
 //Global datepicker handler
 Object.assign(Datepicker.locales, fr);
@@ -25,41 +33,20 @@ document.addEventListener('DOMContentLoaded', function () {
 //htmx confirm override
 document.addEventListener("htmx:confirm", function(e) {
     e.preventDefault()
-    bootbox.confirm({
-        title: "Confirmation ?",
-        message: `${e.detail.question}`,
-        callback: function(r){
-            if(r){
-                e.detail.issueRequest(true)
-            }
+    bsConfirm(`${e.detail.question}`, {
+        type: 'danger',
+        cancelable: true,
+        btnOkText: 'Oui',
+        btnCancelText: 'Non',
+        onOk: () => {
+            e.detail.target.click()
         }
     })
 })
 
-//team creation duplicate test
-document.getElementById("team-tournament-list")
-    .addEventListener("change", function(e) {
-        if (e.target.localName === "select") {
-            const element = e.target;
-            const value = element.value;
-            const elementName = element.attributes.getNamedItem("name").value
-            const prophetContainer = document.querySelector(".prophet")
-            document.querySelectorAll("select:not([name='" + elementName + "'])").forEach((select) => {
-                if(select.value === value){
-                    prophetContainer.setAttribute("style","z-index:999999;margin-left:0;top:"+element.getBoundingClientRect().y+"px;left:"+element.getBoundingClientRect().y+"px")
-                    element.tomselect.clear(true)
-                    new Message("Ce joueur fait déjà partie d'une équipe", {type:"error",duration:4000}, function(){
-                        setTimeout(function(){
-                            prophetContainer.removeAttribute("style")
-                        },500)
-                    }).show()
-                }
-            })
-        }
-    })
-
 //CSS imports
 import "bootstrap/dist/css/bootstrap.min.css";
+import "bootstrap-icons/font/bootstrap-icons.min.css";
 import "vanillajs-datepicker/dist/css/datepicker-bs5.min.css";
-import "./styles/prophet.min.css"
+import "@ymlluo/bs5dialog/dist/bs5dialog.css";
 import './styles/app.css';

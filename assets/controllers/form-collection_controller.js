@@ -10,21 +10,37 @@ export default class extends Controller {
 
     addTeamCollectionElement(event)
     {
-        const item = document.createElement('li');
-        item.classList.add(...['team-collection-item','col-md-6','col-lg-4']);
-        item.innerHTML = this.prototypeValue.replace(/__name__/g, this.indexValue);
         const collection = this
-        collection.collectionContainerTarget.appendChild(item);
+        document.addEventListener("newTeamPlayerAdded", (event) => {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+            event.stopPropagation();
+            let parser = new DOMParser();
+            let prototypeHtmlDoc = parser.parseFromString(collection.prototypeValue, 'text/html');
+            let selects = prototypeHtmlDoc.querySelectorAll("select")
+            selects.forEach((select) => {
+                let optionElement = document.createElement("option")
+                optionElement.value = event.detail.playerName
+                optionElement.innerText = event.detail.playerName
+                select.add(optionElement)
+            })
+            collection.prototypeValue = prototypeHtmlDoc.querySelector("body > div").innerHTML
+        });
+        const item = document.createElement('li');
+        item.classList.add('team-collection-item','shadow','p-3', 'col-md-5','bg-white');
+        item.innerHTML = this.prototypeValue.replace(/__name__/g, this.indexValue);
         collection.indexValue++;
         item.addEventListener('click',function(event){
             if(event.target.classList.contains('stimulus-delete')){
                 collection.indexValue--;
                 item.remove();
             }
-        },{once:true} )
+        })
         const header = document.createElement('p');
-        header.classList.value = 'h3 lead';
+        header.classList.value = 'h3 bold';
         header.innerHTML = "Équipe ";
         item.prepend(header);
+        collection.collectionContainerTarget.appendChild(item);
+        item.scrollIntoView()
     }
 }

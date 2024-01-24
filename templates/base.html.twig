@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="h-100">
     <head>
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
@@ -11,8 +11,40 @@
             {{ importmap('app') }}
         {% endblock %}
     </head>
-    <body>
-        <ul class="prophet"></ul>
-        {% block body %}{% endblock %}
+    <body class="d-flex flex-column h-100">
+    <header>
+        <!-- Fixed navbar -->
+        <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="#">BeerPong Lyon</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarCollapse">
+                    <ul class="navbar-nav me-auto mb-2 mb-md-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url("app_tournament_index") }}">Les tournois</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url("app_championship_index") }}">Les championats</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Les résultats</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+    <main class="flex-grow-1">
+        <div class="container-fluid h-100 d-flex justify-content-center align-items-center">
+            {% block body %}{% endblock %}
+        </div>
+    </main>
+    <footer class="footer mt-auto py-3 bg-light">
+        <div class="container">
+            <span class="text-muted">En cours de création, améliorations à venir !  </span>
+        </div>
+    </footer>
     </body>
 </html>

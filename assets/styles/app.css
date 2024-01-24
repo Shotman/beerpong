@@ -2,6 +2,10 @@ body {
     background-color: lightgray;
 }
 
+main > .container-fluid {
+    padding: 60px 15px;
+}
+
 label.form-label.required:after {
     content: "*";
     color: red;
@@ -12,6 +16,7 @@ ul:has(li.team-collection-item) {
     list-style: none;
 
 }
+
 li.team-collection-item > p:after {
     content: counter(li);
     counter-increment: li;

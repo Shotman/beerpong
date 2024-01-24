@@ -54,10 +54,15 @@ return [
     'htmx.org' => [
         'version' => '1.9.10',
     ],
-    'bootbox' => [
-        'version' => '6.0.0',
+    'bootstrap-icons/font/bootstrap-icons.min.css' => [
+        'version' => '1.11.3',
+        'type' => 'css',
     ],
-    'jquery' => [
-        'version' => '3.7.1',
+    '@ymlluo/bs5dialog/dist/bs5dialog.css' => [
+        'version' => '1.0.7',
+        'type' => 'css',
+    ],
+    '@ymlluo/bs5dialog/dist/bs5dialog.js' => [
+        'version' => '1.0.7',
     ],
 ];

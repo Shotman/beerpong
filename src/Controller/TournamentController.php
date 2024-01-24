@@ -109,7 +109,7 @@ class TournamentController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()){
+        if($form->isSubmitted() && $form->isValid()){
             $teams = array_map(function($team) use ($playerRepository){
                 return new Team($team["player1"], $team["player2"] , $playerRepository);
             }, $request->get('team_tournament')['teams']);

@@ -3,9 +3,10 @@
 {% block title %}New Championship{% endblock %}
 
 {% block body %}
-    <h1>Create new Championship</h1>
-
-    {{ include('championship/_form.html.twig') }}
-
-    <a href="{{ path('app_championship_index') }}">back to list</a>
+    <section class="bg-body-secondary col-md-6 p-3">
+        <h1>Créer un championat</h1>
+        <div>
+            {{ include('championship/_form.html.twig') }}
+        </div>
+    </section>
 {% endblock %}

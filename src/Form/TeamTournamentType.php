@@ -26,9 +26,10 @@ class TeamTournamentType extends AbstractType
                 'label' => false,
             ])
             ->add('save',SubmitType::class,[
-                'label' => 'Save',
+                'translation_domain' => 'messages', // optional
+                'label' => 'btn.save',
                 'attr' => [
-                    'class' => 'btn btn-primary',
+                    'class' => 'btn btn-success',
                 ]
             ])
         ;

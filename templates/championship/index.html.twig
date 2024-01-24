@@ -3,25 +3,23 @@
 {% block title %}Championship index{% endblock %}
 
 {% block body %}
-    <h1>Championship index</h1>
-
-    <table class="table">
+<div class="align-self-start container-fluid ">
+    <h1>{{ "championship.list"|trans }}</h1>
+    <table class="table table-striped text-center">
         <thead>
             <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Date_start</th>
-                <th>Date_end</th>
-                <th>actions</th>
+                <th>{{ "championship.name"|trans }}</th>
+                <th>{{ "championship.date_start"|trans }}</th>
+                <th>{{ "championship.date_end"|trans }}</th>
+                <th>{{ "championship.actions"|trans }}</th>
             </tr>
         </thead>
         <tbody>
         {% for championship in championships %}
             <tr>
-                <td>{{ championship.id }}</td>
                 <td>{{ championship.name }}</td>
-                <td>{{ championship.dateStart ? championship.dateStart|date('Y-m-d') : '' }}</td>
-                <td>{{ championship.dateEnd ? championship.dateEnd|date('Y-m-d') : '' }}</td>
+                <td>{{ championship.dateStart ? championship.dateStart|date('d/m/Y') : '' }}</td>
+                <td>{{ championship.dateEnd ? championship.dateEnd|date('d/m/y') : '' }}</td>
                 <td>
                     <a href="{{ path('app_championship_show', {'id': championship.id}) }}">show</a>
                     <a href="{{ path('app_championship_edit', {'id': championship.id}) }}">edit</a>
@@ -29,11 +27,12 @@
             </tr>
         {% else %}
             <tr>
-                <td colspan="5">no records found</td>
+                <td colspan="4">{{ "championship.none"|trans }}</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_championship_new') }}">Create new</a>
+    <a class="btn btn-success" href="{{ path('app_championship_new') }}">{{ "btn.create"|trans }}</a>
+</div>
 {% endblock %}

@@ -1,11 +1,10 @@
 {{ form_start(form, {'attr': {'id': 'tournament'}}) }}
     {{ form_widget(form) }}
 {{ form_end(form) }}
-<div class="float-start btn-group">
-    <button form="{{ form.vars.id }}" class="btn btn-primary">{{ button_label|default('btn.create')|trans }}</button>
-    <a class="btn btn-warning" href="{{ path('app_tournament_index') }}">{{ "btn.back"|trans }}</a>
+<div class="btn-group">
+    <button form="{{ form.vars.id }}" class="btn btn-primary">{% if form.vars.data.id %}{{ "btn.edit"|trans }}{% else %}{{ "btn.create"|trans }}{% endif %}</button>
     {% if form.vars.data.id %}
-       //htmx delete button
         {% include 'tournament/_delete_form.html.twig' with {"form":form} %}
     {% endif %}
+    <a class="btn btn-warning" href="{{ path('app_tournament_index') }}">{{ "btn.back"|trans }}</a>
 </div>
