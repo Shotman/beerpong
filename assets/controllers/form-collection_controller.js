@@ -12,9 +12,6 @@ export default class extends Controller {
     {
         const collection = this
         document.addEventListener("newTeamPlayerAdded", (event) => {
-            event.preventDefault();
-            event.stopImmediatePropagation();
-            event.stopPropagation();
             let parser = new DOMParser();
             let prototypeHtmlDoc = parser.parseFromString(collection.prototypeValue, 'text/html');
             let selects = prototypeHtmlDoc.querySelectorAll("select")
