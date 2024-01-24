@@ -24,7 +24,7 @@ export default class extends Controller {
                 optionElement.innerText = event.detail.playerName
                 select.add(optionElement)
             })
-            collection.prototypeValue = prototypeHtmlDoc.querySelector("body > div").innerHTML
+            collection.prototypeValue = prototypeHtmlDoc.querySelector("body > div").outerHTML
         });
         const item = document.createElement('li');
         item.classList.add('team-collection-item','shadow','p-3', 'col-md-5','bg-white');
