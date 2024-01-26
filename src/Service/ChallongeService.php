@@ -174,7 +174,12 @@ class ChallongeService
             $tournament->setName($tournamentDetails["name"]);
             $tournament->setDate($tournamentDetails["date"]);
             $tournament->setChallongeId($this->tournament->tournament->url);
-            $tournament->setExtraData(["number_of_teams" => $tournamentDetails["number_of_teams"]]);
+            $extraData = ["number_of_teams" => $tournamentDetails["number_of_teams"]];
+            if($this->tournament->tournament->state == "ended")
+            {
+                $extraData["state"] = "ended";
+            }
+            $tournament->setExtraData($extraData);
         }
         foreach ($tournamentDetails["participants"] as $participant) {
             $player = $this->playerRepository->findOneBy(["identifier" => strtolower($slugger->slug($participant["name"]))]) ?: new Player();
@@ -268,5 +273,18 @@ class ChallongeService
             "query" => $query,
             "body" => $body,
         ]);
+    }
+
+    public function finalizeTournament(Tournament $tournament)
+    {
+        $query = [
+            "api_key" => $this->parameterBag->get("challonge_api_key"),
+        ];
+        $response = $this->client->request("POST",$this->baseUrl.'/tournaments/'.$tournament->getChallongeId().'/finalize.json',[
+            "query" => $query,
+        ]);
+        $tournamentDetails = $this->getTournamentDetails($tournament->getChallongeId(),true);
+        $this->saveTournament(true)->saveTournamentData($tournamentDetails);
+        return $tournamentDetails;
     }
 }

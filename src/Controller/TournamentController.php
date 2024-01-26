@@ -154,6 +154,14 @@ class TournamentController extends AbstractController
         ]);
     }
 
+    #[Route('/tournois/{tournament}/finish', name: 'app_tournament_finish', methods: ['POST'])]
+    public function finish(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
+    {
+        return new JsonResponse('', Response::HTTP_OK,[
+            "HX-Redirect" => $this->generateUrl('app_tournament_show', ['id' => $tournament->getId()])
+        ]);
+    }
+
     private function getTournamentMatches(Tournament $tournament, ChallongeService $challongeService): array
     {
         return $challongeService->getTournamentMatches($tournament);
