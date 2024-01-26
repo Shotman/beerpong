@@ -11,7 +11,7 @@
         >
             <h1>Démarrer le tournois</h1>
             {{ form_start(form) }}
-                <ul {{ stimulus_target('form-collection', 'collectionContainer') }} id="team-tournament-list" class="d-flex gap-2 flex-wrap justify-content-evenly" style="list-style: none"></ul>
+                <div {{ stimulus_target('form-collection', 'collectionContainer') }} class="d-flex gap-2 justify-content-evenly flex-wrap" id="team-tournament-list"></div>
             <div class="btn-group">
             <button class="btn btn-outline-primary" type="button" {{ stimulus_action('form-collection', 'addTeamCollectionElement') }}>{{ "tournament.addTeam"|trans }}</button>
             {{ form_widget(form.save) }}

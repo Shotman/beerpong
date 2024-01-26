@@ -45,4 +45,14 @@ class ChampionshipRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getActiveChampionships()
+    {
+        return $this->createQueryBuilder('c')
+            ->andWhere('c.date_end >= :val')
+            ->setParameter('val', new \DateTime('now'))
+            ->orderBy('c.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

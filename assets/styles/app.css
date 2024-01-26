@@ -2,7 +2,7 @@ body {
     background-color: lightgray;
 }
 
-main > .container-fluid {
+main.flex-grow-1 > .container-fluid {
     padding: 60px 15px;
 }
 
@@ -11,13 +11,13 @@ label.form-label.required:after {
     color: red;
 }
 
-ul:has(li.team-collection-item) {
+div:has(div.team-collection-item) {
     counter-reset: li;
     list-style: none;
 
 }
 
-li.team-collection-item > p:after {
+div.team-collection-item > p:after {
     content: counter(li);
     counter-increment: li;
 }

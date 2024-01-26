@@ -23,7 +23,7 @@
                 <td>{{ tournament.date ? tournament.date|date('d/m/Y') : '' }}</td>
                 <td>{{ tournament.championship ? tournament.championship.name : 'N/A' }}</td>
                 <td>
-                    <div class="btn-group d-flex align-items-center justify-content-center">
+                    <div class="btn-group btn-group-sm d-flex align-items-center justify-content-center">
                     <a class="btn btn-primary" href="{{ path('app_tournament_show', {'id': tournament.id}) }}">{{ "btn.show"|trans }}</a>
                     <a class="btn btn-secondary" href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">{{ "btn.edit"|trans }}</a>
                     {% if tournament.challongeId is same as(null) %}

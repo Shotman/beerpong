@@ -54,4 +54,16 @@ class TournamentRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+    public function getCommingTournaments()
+    {
+        return $this->createQueryBuilder('t')
+            ->where('t.date >= :val')
+            ->andWhere('t.date <= :val2')
+            ->setParameter('val', new \DateTime('now'))
+            ->setParameter('val2', new \DateTime('+1 month'))
+            ->orderBy('t.date', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

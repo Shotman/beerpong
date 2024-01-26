@@ -1,0 +1,25 @@
+<div class="card bg-body-secondary shadow p-3">
+    <p class="display-5 card-header">Matchs en cours</p>
+    <main class="card-body d-flex flex-wrap justify-content-around">
+        {% for match in matches %}
+            <div class="shadow px-0 border-1 border-black border text-center col-5 d-flex align-items-center container-fluid mb-2">
+                <div class="bg-danger col-md-1 text-white d-flex h-100 justify-content-center align-items-center h-100 border-end border-black align-center">
+                    <p class="mb-0">VS</p>
+                </div>
+                <div class="col-md-9 h-100">
+                    <div class="border-bottom border-black d-flex justify-content-center align-items-center h-50">
+                        <p class="mb-0">{{ participants[match.player1_id].name  }}</p>
+                    </div>
+                    <div class="d-flex justify-content-center align-items-center h-50">
+                        <p class="mb-0">{{ participants[match.player2_id].name  }}</p>
+                    </div>
+                </div>
+                <div class="btn-group-vertical col-md-2 h-100" style="border-left: 1px solid black;">
+                    <div hx-swap="innerHTML" hx-target="#tournamentMatches" hx-trigger="click" hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id,"winner":match.player1_id}) }}" class="btn btn-success rounded-0"><i class="bi bi-check-circle"></i></div>
+                    <div hx-swap="innerHTML" hx-target="#tournamentMatches" hx-trigger="click" hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id,"winner":match.player2_id}) }}" class="btn btn-success rounded-0"><i class="bi bi-check-circle"></i></div>
+                </div>
+            </div>
+        {% endfor %}
+    </main>
+    <div hx-swap="innerHTML" hx-trigger="click" hx-get="{{ url("app_tournament_matches",{"id":tournament.id}) }}" hx-target="#tournamentMatches" class="col-md-1 btn btn-primary">Actualiser</div>
+</div>

@@ -23,8 +23,8 @@ export default class extends Controller {
             })
             collection.prototypeValue = prototypeHtmlDoc.querySelector("body > div").outerHTML
         });
-        const item = document.createElement('li');
-        item.classList.add('team-collection-item','shadow','p-3', 'col-md-5','bg-white');
+        const item = document.createElement('div');
+        item.classList.add('team-collection-item','shadow','p-3', 'col-md-5','col-lg-3', 'col-sm-10','bg-white');
         item.innerHTML = this.prototypeValue.replace(/__name__/g, this.indexValue);
         collection.indexValue++;
         item.addEventListener('click',function(event){

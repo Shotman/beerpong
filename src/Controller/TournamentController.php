@@ -57,12 +57,37 @@ class TournamentController extends AbstractController
     }
 
     #[Route('/{id}', name: 'app_tournament_show', methods: ['GET'])]
-    public function show(Tournament $tournament): Response
+    public function show(Tournament $tournament, ChallongeService $challongeService): Response
     {
+        $matches = $this->getTournamentMatches($tournament, $challongeService);
+        $participants = $this->getTournamentParticipantsDetails($tournament, $challongeService);
         return $this->render('tournament/show.html.twig', [
             'tournament' => $tournament,
+            'matches' => $matches,
+            'participants' => $participants,
         ]);
     }
+
+    #[Route('/{id}/matches', name: 'app_tournament_matches', methods: ['GET'])]
+    public function matches(Tournament $id, ChallongeService $challongeService): Response
+    {
+        $participants = $this->getTournamentParticipantsDetails($id, $challongeService);
+        $matches = $this->getTournamentMatches($id, $challongeService);
+        return $this->render('tournament/_partial/matches.html.twig', [
+            'tournament' => $id,
+            'participants' => $participants,
+            'matches' => $matches,
+        ]);
+    }
+
+    #Route(path: '/{tournament}/winner/{winner}', name: 'app_tournament_match_update', methods: ['POST'])]
+    public function updateMatch(Tournament $tournament, int $winner, ChallongeService $challongeService): Response
+    {
+        //@TODO: Set match winner and return new match details
+        $challongeService->updateMatch($tournament, $request->get('match')['winner']);
+        return new JsonResponse('', Response::HTTP_OK);
+    }
+
 
     #[Route(path: [
         "fr" => "/{id}/modifier",
@@ -109,7 +134,7 @@ class TournamentController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted() && $form->isValid()){
+        if($form->isSubmitted()){
             $teams = array_map(function($team) use ($playerRepository){
                 return new Team($team["player1"], $team["player2"] , $playerRepository);
             }, $request->get('team_tournament')['teams']);
@@ -122,5 +147,15 @@ class TournamentController extends AbstractController
             'tournament' => $tournament,
             'form' => $form->createView(),
         ]);
+    }
+
+    private function getTournamentMatches(Tournament $tournament, ChallongeService $challongeService): array
+    {
+        return $challongeService->getTournamentMatches($tournament);
+    }
+
+    private function getTournamentParticipantsDetails(Tournament $tournament, ChallongeService $challongeService): array
+    {
+        return $challongeService->getParticipantsDetails($tournament);
     }
 }

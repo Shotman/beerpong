@@ -21,8 +21,10 @@
                 <td>{{ championship.dateStart ? championship.dateStart|date('d/m/Y') : '' }}</td>
                 <td>{{ championship.dateEnd ? championship.dateEnd|date('d/m/y') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_championship_show', {'id': championship.id}) }}">show</a>
-                    <a href="{{ path('app_championship_edit', {'id': championship.id}) }}">edit</a>
+                    <div class="btn-group btn-group-sm d-flex align-items-center justify-content-center">
+                    <a class="btn btn-primary" href="{{ path('app_championship_show', {'id': championship.id}) }}">{{ "btn.show"|trans }}</a>
+                    <a class="btn btn-secondary" href="{{ path('app_championship_edit', {'id': championship.id}) }}">{{ "btn.edit"|trans }}</a>
+                    </div>
                 </td>
             </tr>
         {% else %}

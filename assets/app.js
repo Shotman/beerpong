@@ -16,9 +16,6 @@ window.bsMessage = message;
 window.bsLoad = load;
 i18n.setCurrentLang('fr');
 
-
-
-
 //Global datepicker handler
 Object.assign(Datepicker.locales, fr);
 document.addEventListener('DOMContentLoaded', function () {
@@ -32,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 //htmx confirm override
 document.addEventListener("htmx:confirm", function(e) {
+    if (!e.target.hasAttribute('hx-confirm')) return;
     e.preventDefault()
     bsConfirm(`${e.detail.question}`, {
         type: 'danger',
@@ -39,7 +37,7 @@ document.addEventListener("htmx:confirm", function(e) {
         btnOkText: 'Oui',
         btnCancelText: 'Non',
         onOk: () => {
-            e.detail.target.click()
+            e.detail.issueRequest()
         }
     })
 })
