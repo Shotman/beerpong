@@ -118,13 +118,14 @@ class ChallongeService
          * @var Tournament $tournamentDb
          */
         $tournamentDb = $this->tournamentRepository->findOneBy(["challongeId" => $tournament]);
-        if (!is_null($tournamentDb) && $tournamentDb->getTournamentResults()->count() > 0) {
+        if (!is_null($tournamentDb) && $tournamentDb->getTournamentResults()->count() > 0 && !$refresh) {
             return ["id" => $tournamentDb->getChallongeId(), "name" => $tournamentDb->getName(), "date" => $tournamentDb->getDate(), "number_of_teams" => $tournamentDb->getExtraData()["number_of_teams"], "participants" => $tournamentDb->getTournamentResults()->map(function (
                 $tournamentResult) {
                 return ["name" => $tournamentResult->getPlayer()->getName(), "points" => $tournamentResult->getPoints(), "rank" => $tournamentResult->getRank()];
             })->toArray()];
         }
         $this->getTournament($tournament, $refresh);
+        dump($this->tournament);
         $tournamentDetails = ["raw" => $this->tournament->tournament, "id" => $this->tournament->tournament->url, "name" => $this->tournament->tournament->name, "date" => new DateTime($this->tournament->tournament->started_at), "number_of_teams" => $this->tournament->tournament->participants_count, "participants" => $this->getResults()];
         if ($this->saveTournament && $this->tournament->tournament->state == "complete") {
             $this->saveTournamentData($tournamentDetails);
@@ -175,6 +176,7 @@ class ChallongeService
             $tournament->setDate($tournamentDetails["date"]);
             $tournament->setChallongeId($this->tournament->tournament->url);
             $extraData = ["number_of_teams" => $tournamentDetails["number_of_teams"]];
+            dump($this->tournament->tournament);
             if($this->tournament->tournament->state == "ended")
             {
                 $extraData["state"] = "ended";
@@ -283,8 +285,8 @@ class ChallongeService
         $response = $this->client->request("POST",$this->baseUrl.'/tournaments/'.$tournament->getChallongeId().'/finalize.json',[
             "query" => $query,
         ]);
-        $tournamentDetails = $this->getTournamentDetails($tournament->getChallongeId(),true);
-        $this->saveTournament(true)->saveTournamentData($tournamentDetails);
+        $tournamentDetails = $this->saveTournament()->getTournamentDetails($tournament->getChallongeId(),true);
+        dump($tournamentDetails);
         return $tournamentDetails;
     }
 }

@@ -157,6 +157,7 @@ class TournamentController extends AbstractController
     #[Route('/tournois/{tournament}/finish', name: 'app_tournament_finish', methods: ['POST'])]
     public function finish(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
     {
+        $challongeService->finalizeTournament($tournament);
         return new JsonResponse('', Response::HTTP_OK,[
             "HX-Redirect" => $this->generateUrl('app_tournament_show', ['id' => $tournament->getId()])
         ]);
