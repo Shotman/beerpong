@@ -80,12 +80,17 @@ class TournamentController extends AbstractController
         ]);
     }
 
-    #Route(path: '/{tournament}/winner/{winner}', name: 'app_tournament_match_update', methods: ['POST'])]
-    public function updateMatch(Tournament $tournament, int $winner, ChallongeService $challongeService): Response
+    #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'])]
+    public function updateMatch(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
     {
-        //@TODO: Set match winner and return new match details
-        $challongeService->updateMatch($tournament, $request->get('match')['winner']);
-        return new JsonResponse('', Response::HTTP_OK);
+        $challongeService->setMatchWinner($tournament, $request);
+        $matches = $this->getTournamentMatches($tournament, $challongeService);
+        $participants = $this->getTournamentParticipantsDetails($tournament, $challongeService);
+        return $this->renderBlock('tournament/show.html.twig',"body", [
+            'tournament' => $tournament,
+            'participants' => $participants,
+            'matches' => $matches,
+        ]);
     }
 
 

@@ -1,13 +1,12 @@
 import './bootstrap.js';
 
 //3rd party libraries
-import { Modal as bsModal } from 'bootstrap'
+import 'bootstrap'
 import { alert, confirm, toast, prompt, message, load, i18n } from "@ymlluo/bs5dialog/dist/bs5dialog.js";
 import { Datepicker } from 'vanillajs-datepicker';
 import fr from 'vanillajs-datepicker/locales/fr';
 import htmx from 'htmx.org';
 window.htmx = htmx
-window.modal = bsModal;
 window.bsAlert = alert;
 window.bsConfirm = confirm;
 window.bsToast = toast;
@@ -31,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener("htmx:confirm", function(e) {
     if (!e.target.hasAttribute('hx-confirm')) return;
     e.preventDefault()
+    console.log(e);
     bsConfirm(`${e.detail.question}`, {
         type: 'danger',
         cancelable: true,

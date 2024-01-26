@@ -12,6 +12,7 @@ use DateTime;
 use Exception;
 use stdClass;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\String\Slugger\AsciiSlugger;
 use Symfony\Contracts\Cache\CacheInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
@@ -250,5 +251,22 @@ class ChallongeService
             return $participants;
         }, $beta);
         return $participants;
+    }
+
+    public function setMatchWinner(Tournament $tournament, Request $request)
+    {
+        $query = [
+            "api_key" => $this->parameterBag->get("challonge_api_key"),
+        ];
+        $body =  [
+            "match" => [
+                "winner_id" => (int) $request->get("winner"),
+                "scores_csv" => $request->get("playerPosition") === "1" ? "1-0" : "0-1"
+            ]
+        ];
+        $response = $this->client->request("PUT",$this->baseUrl.'/tournaments/'.$tournament->getChallongeId().'/matches/'.$request->get("match_id")."json",[
+            "query" => $query,
+            "body" => $body,
+        ]);
     }
 }
