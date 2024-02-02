@@ -6,7 +6,7 @@
  <div id="showViewContainer" class="container-fluid align-self-start">
      <h1>Tournois - <a target="_blank" href="https://challonge.com/fr/{{ tournament.challongeId }}">{{ tournament.name }}</a> - {{ tournament.date ? tournament.date|date('d/m/y') : '' }} </h1>
      {% if tournament.extraData.state is not defined %}
-     <div id="tournamentMatches">
+     <div id="tournamentMatches" class="fade-in fade-out">
          {% include 'tournament/_partial/matches.html.twig' with {"matches":matches|default([]),"participants":participants,"tournament":tournament} %}
      </div>
      {% endif %}

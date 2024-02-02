@@ -21,3 +21,24 @@ div.team-collection-item > p:after {
     content: counter(li);
     counter-increment: li;
 }
+
+.htmx-indicator{
+    display: none;
+}
+
+.htmx-request .htmx-indicator.spinner-border{
+    display:inline-block;
+}
+
+.fade-in.htmx-added {
+    opacity: 0;
+}
+.fade-in {
+    opacity: 1;
+    transition: opacity 1s ease-out;
+}
+
+.fade-out.htmx-swapping {
+    opacity: 0;
+    transition: opacity 1s ease-out;
+}

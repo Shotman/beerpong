@@ -7,27 +7,25 @@
                 <div class="bg-danger col-md-1 text-white d-flex h-100 justify-content-center align-items-center h-100 border-end border-black align-center">
                     <p class="mb-0">VS</p>
                 </div>
-                <div class="col-md-9 h-100">
-                    <div class="border-bottom border-black d-flex justify-content-center align-items-center h-50">
-                        <p class="mb-0">{{ participants[match.player1_id].name  }}</p>
+                <div class="col-md-11 h-100">
+                    <div class="border-bottom border-black d-flex justify-content-between align-items-center w-100 h-50">
+                        <p class="flex-grow-1 mb-0">{{ participants[match.player1_id].name  }}</p>
+                        <button type="button" hx-include="#matchId{{ match.id }},#player1Id{{ match.id }},#winner1Position{{ match.id }}" hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click" hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}" class="float-end btn btn-success rounded-0"><i class="bi bi-check-circle"></i></button>
                     </div>
-                    <div class="d-flex justify-content-center align-items-center h-50">
-                        <p class="mb-0">{{ participants[match.player2_id].name  }}</p>
+                    <div class="border-bottom border-black d-flex justify-content-between align-items-center w-100 h-50">
+                        <p class="flex-grow-1 mb-0">{{ participants[match.player2_id].name  }}</p>
+                        <button type="button" hx-include="#matchId{{ match.id }},#player2Id{{ match.id }},#winner2Position{{ match.id }}" hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click" hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}" class="float-end btn btn-success rounded-0"><i class="bi bi-check-circle"></i></button>
                     </div>
-                </div>
-                <div class="btn-group-vertical col-md-2 h-100" style="border-left: 1px solid black;">
                     <input id="matchId{{ match.id }}" type="hidden" name="match_id" value="{{ match.id }}">
                     <input id="player1Id{{ match.id }}" type="hidden" name="winner" value="{{ match.player1_id }}">
                     <input id="winner1Position{{ match.id }}" type="hidden" name="playerPosition" value="1">
                     <input id="winner2Position{{ match.id }}" type="hidden" name="playerPosition" value="2">
                     <input id="player2Id{{ match.id }}" type="hidden" name="winner" value="{{ match.player2_id }}">
-                    <div hx-include="#matchId{{ match.id }},#player1Id{{ match.id }},#winner1Position{{ match.id }}" hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click" hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}" class="btn btn-success rounded-0"><i class="bi bi-check-circle"></i></div>
-                    <div hx-include="#matchId{{ match.id }},#player2Id{{ match.id }},#winner2Position{{ match.id }}" hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click" hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}" class="btn btn-success rounded-0"><i class="bi bi-check-circle"></i></div>
                 </div>
             </div>
         {% endfor %}
     </main>
-    <div hx-swap="innerHTML" hx-trigger="click" hx-get="{{ url("app_tournament_matches",{"id":tournament.id}) }}" hx-target="#tournamentMatches" class="col-md-1 btn btn-primary">Actualiser</div>
+    <button type="button" hx-swap="innerHTML" hx-trigger="click" hx-get="{{ url("app_tournament_matches",{"id":tournament.id}) }}" hx-target="#tournamentMatches" class="col-md-2 col-lg-1 btn btn-primary">Actualiser &nbsp;<span class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span></button>
     {% else %}
     <div class="alert alert-warning">Aucun match en cours</div>
     {% endif %}
