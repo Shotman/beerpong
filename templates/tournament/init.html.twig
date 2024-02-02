@@ -1,21 +1,23 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Init Tournament{% endblock %}
+{% block title %}Démarrer un tournois{% endblock %}
 
 {% block body %}
     <section class="bg-body-secondary col-md-10 p-3 mt-2 overflow-y-auto align-self-start">
-<div {{ stimulus_controller('form-collection') }}
+        <div {{ stimulus_controller('form-collection') }}
                 data-form-collection-index-value="{{ form.teams|length > 0 ? form.teams|last.vars.name + 1 : 0 }}"
                 data-form-collection-prototype-value="{{ form_widget(form.teams.vars.prototype)|e('html_attr') }}"
                 class="container-fluid gap-2"
         >
             <h1>Démarrer le tournois</h1>
             {{ form_start(form) }}
-                <div {{ stimulus_target('form-collection', 'collectionContainer') }} class="d-flex gap-2 justify-content-evenly flex-wrap" id="team-tournament-list"></div>
+            <div {{ stimulus_target('form-collection', 'collectionContainer') }}
+                    class="d-flex gap-2 justify-content-evenly flex-wrap" id="team-tournament-list"></div>
             <div class="btn-group">
-            <button class="btn btn-outline-primary" type="button" {{ stimulus_action('form-collection', 'addTeamCollectionElement') }}>{{ "tournament.addTeam"|trans }}</button>
-            {{ form_widget(form.save) }}
-            <a class="btn btn-warning" href="{{ path('app_tournament_index') }}">{{ "btn.back"|trans }}</a>
+                <button class="btn btn-outline-primary"
+                        type="button" {{ stimulus_action('form-collection', 'addTeamCollectionElement') }}>{{ "tournament.addTeam"|trans }}</button>
+                {{ form_widget(form.save) }}
+                <a class="btn btn-warning" href="{{ path('app_tournament_index') }}">{{ "btn.back"|trans }}</a>
             </div>
             {{ form_end(form) }}
         </div>

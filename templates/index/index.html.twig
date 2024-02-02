@@ -1,21 +1,37 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello IndexController!{% endblock %}
+{% block title %}Beerpong Lyon!{% endblock %}
 
 {% block body %}
-<div class="d-flex flex-wrap container-fluid justify-content-evenly">
-    <div class="card col-md-5 col-11 col- bg-body-secondary shadow p-3">
-        <p class="card-header display-3">Tournois à venir</p>
-        <main class="card-body">
-            {{ dump(commingTournaments) }}
-        </main>
-    </div>
-    <div class="card col-md-5 col-11 bg-body-secondary shadow p-3">
-        <p class="card-header display-3">Championats en cours</p>
-        <main class="card-body">
-            {{ dump(activeChampionships) }}
-        </main>
-    </div>
+    <div class="d-flex flex-wrap container-fluid justify-content-evenly">
+        <div class="card col-md-5 col-11 col- bg-body-secondary shadow p-3">
+            <p class="card-header display-3">Tournois à venir</p>
+            <main class="card-body">
+                {% if commingTournaments|length >= 1 %}
+                <ul class="list-group">
+                {% for tournament in commingTournaments %}
+                    <li class="list-group-item"><a href="{{ url("app_tournament_show",{"id":tourament.id}) }}">{{ tournament.name }}</a></li>
+                {% endfor %}
+                </ul>
+                {% else %}
+                <p class="card-text">Aucun tournoi à venir</p>
+                {% endif %}
+            </main>
+        </div>
+        <div class="card col-md-5 col-11 bg-body-secondary shadow p-3">
+            <p class="card-header display-3">Championats en cours</p>
+            <main class="card-body">
+                {% if activeChampionships|length >= 1 %}
+                <ul class="list-group">
+                {% for championship in activeChampionships %}
+                    <li class="list-group-item"><a href="{{ url("app_championship_show",{"id":championship.id}) }}">{{ championship.name }}</a></li>
+                {% endfor %}
+                </ul>
+                {% else %}
+                <p class="card-text">Aucun championnat en cours</p>
+                {% endif %}
+            </main>
+        </div>
 
-</div>
+    </div>
 {% endblock %}

@@ -8,6 +8,7 @@ class Accordion {
             (this.isExpanding = !1),
             this.summary.addEventListener("click", (i) => this.onClick(i));
     }
+
     onClick(i) {
         i.preventDefault(),
             (this.el.style.overflow = "hidden"),
@@ -15,35 +16,39 @@ class Accordion {
                 ? this.open()
                 : (this.isExpanding || this.el.open) && this.shrink();
     }
+
     shrink() {
         this.isClosing = !0;
         let i = `${this.el.offsetHeight}px`,
             t = `${this.summary.offsetHeight}px`;
         this.animation && this.animation.cancel(),
             (this.animation = this.el.animate(
-                { height: [i, t] },
-                { duration: 200, easing: "ease-in-out" }
+                {height: [i, t]},
+                {duration: 200, easing: "ease-in-out"}
             )),
             (this.animation.onfinish = () => this.onAnimationFinish(!1)),
             (this.animation.oncancel = () => (this.isClosing = !1));
     }
+
     open() {
         (this.el.style.height = `${this.el.offsetHeight}px`),
             (this.el.open = !0),
             window.requestAnimationFrame(() => this.expand());
     }
+
     expand() {
         this.isExpanding = !0;
         let i = `${this.el.offsetHeight}px`,
             t = `${this.summary.offsetHeight + this.content.offsetHeight}px`;
         this.animation && this.animation.cancel(),
             (this.animation = this.el.animate(
-                { height: [i, t] },
-                { duration: 400, easing: "ease-out" }
+                {height: [i, t]},
+                {duration: 400, easing: "ease-out"}
             )),
             (this.animation.onfinish = () => this.onAnimationFinish(!0)),
             (this.animation.oncancel = () => (this.isExpanding = !1));
     }
+
     onAnimationFinish(i) {
         (this.el.open = i),
             (this.animation = null),
@@ -52,6 +57,7 @@ class Accordion {
             (this.el.style.height = this.el.style.overflow = "");
     }
 }
-document.querySelectorAll("details").forEach((i) => {
+
+document.querySelectorAll(".accordion > details.accordion-item").forEach((i) => {
     new Accordion(i);
 });

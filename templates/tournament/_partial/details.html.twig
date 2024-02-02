@@ -1,0 +1,17 @@
+<details class="accordion-item border-bottom-0">
+    <summary class="accordion-button"><p class="accordion-header user-select-none">{{ tournament.name}}</p></summary>
+    <table class="table-striped table-hover table table-bordered accordion-body border-bottom px-2 text-center">
+        <tbody>
+        <tr>
+            <td>JOUEUR</td>
+            <td>POINTS</td>
+        </tr>
+        {% for result in tournament.tournamentResults|sort((a,b) => b.points <=> a.points) %}
+            <tr>
+                <td>{{ result.player.name }}</td>
+                <td>{{ result.points }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</details>

@@ -14,7 +14,10 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-#[Route('/championship')]
+#[Route([
+    "fr" => "/championnats",
+    "en" => "/championships",
+])]
 class ChampionshipController extends AbstractController
 {
     #[Route('/', name: 'app_championship_index', methods: ['GET'])]
@@ -25,7 +28,10 @@ class ChampionshipController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_championship_new', methods: ['GET', 'POST'])]
+    #[Route([
+        "fr" => "/nouveau",
+        "en" => "/new",
+    ], name: 'app_championship_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
         $championship = new Championship();
@@ -58,7 +64,10 @@ class ChampionshipController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_championship_edit', methods: ['GET', 'POST'])]
+    #[Route([
+        "fr" => "/{id}/modifier",
+        "en" => "/{id}/edit",
+    ], name: 'app_championship_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
         $form = $this->createForm(ChampionshipType::class, $championship);

@@ -3,4 +3,6 @@
 {% else %}
     {% set idToDelete = form.vars.data.id %}
 {% endif %}
-<a class="btn btn-danger" hx-headers='{"X-CSRFToken": "{{ csrf_token('delete'~idToDelete) }}"}') hx-delete="{{ path('app_championship_delete', {id: idToDelete}) }}" hx-confirm="Voulez-vous supprimer ce championnat ?">{{ "btn.delete"|trans }}</a>
+<a class="btn btn-danger" hx-headers='{"X-CSRFToken": "{{ csrf_token('delete'~idToDelete) }}"}' )
+   hx-delete="{{ path('app_championship_delete', {id: idToDelete}) }}"
+   hx-confirm="Voulez-vous supprimer ce championnat ?">{{ "btn.delete"|trans }}</a>

@@ -2,7 +2,8 @@
     {{ form_widget(form) }}
 {{ form_end(form) }}
 <div class="btn-group">
-    <button form="{{ form.vars.id }}" class="btn btn-primary">{% if form.vars.data.id %}{{ "btn.edit"|trans }}{% else %}{{ "btn.create"|trans }}{% endif %}</button>
+    <button form="{{ form.vars.id }}"
+            class="btn btn-primary">{% if form.vars.data.id %}{{ "btn.edit"|trans }}{% else %}{{ "btn.create"|trans }}{% endif %}</button>
     {% if form.vars.data.id %}
         {% include 'championship/_delete_form.html.twig' with {"form":form} %}
     {% endif %}
