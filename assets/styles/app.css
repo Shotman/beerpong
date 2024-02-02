@@ -42,3 +42,22 @@ div.team-collection-item > p:after {
     opacity: 0;
     transition: opacity 1s ease-out;
 }
+
+details.accordion-item:not([open]) .accordion-button {
+    background-color: var(--bs-accordion-bg);
+}
+
+details.accordion-item:not([open]):last-of-type .accordion-button {
+    border-bottom-right-radius: var(--bs-accordion-border-radius);
+    border-bottom-left-radius: var(--bs-accordion-border-radius);
+}
+
+details.accordion-item:not([open]) .accordion-button::after {
+    background-image: var(--bs-accordion-btn-active-icon);
+    transform: unset;
+}
+
+details.accordion-item[open] .accordion-button::after {
+    background-image: var(--bs-accordion-btn-icon);
+    transform: var(--bs-accordion-btn-icon-transform);
+}

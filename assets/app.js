@@ -42,6 +42,9 @@ document.addEventListener("htmx:confirm", function(e) {
     })
 })
 
+//custom js imports
+import './js/accordion';
+
 //CSS imports
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
