@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Contracts\Cache\CacheInterface;
 
 #[Route(path: [
     "fr" => "/tournois",
@@ -133,9 +134,10 @@ class TournamentController extends AbstractController
         "fr" => "/{id}/démarrer",
         "en" => "/{id}/init",
     ], name: 'app_tournament_init', methods: ['GET', 'POST'])]
-    public function init(Request $request, Tournament $tournament, ChallongeService $challongeService ,PlayerRepository $playerRepository): Response
+    public function init(Request $request, Tournament $tournament, ChallongeService $challongeService ,PlayerRepository $playerRepository, CacheInterface $randomCache): Response
     {
-        $form = $this->createForm(TeamTournamentType::class);
+        $data = $randomCache->getItem('tournament_'.$tournament->getId()."_teams")->get() ?? null;
+        $form = $this->createForm(TeamTournamentType::class, $data);
 
         $form->handleRequest($request);
 
@@ -145,6 +147,7 @@ class TournamentController extends AbstractController
             }, $request->get('team_tournament')['teams']);
             $challongeService->createTournament($tournament, $teams);
             $challongeService->startTournament($tournament);
+            $randomCache->delete('tournament_'.$tournament->getId()."_teams");
             return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
         }
 
@@ -160,6 +163,22 @@ class TournamentController extends AbstractController
         $challongeService->finalizeTournament($tournament);
         return new JsonResponse('', Response::HTTP_OK,[
             "HX-Redirect" => $this->generateUrl('app_tournament_show', ['id' => $tournament->getId()])
+        ]);
+    }
+
+    #[Route(path: [
+        "fr" => "/{id}/sauvegarder",
+        "en" => "/{id}/save",
+    ], name: 'app_tournament_save', methods: ['POST'])]
+    public function save(Request $request, Tournament $tournament ,CacheInterface $randomCache): Response
+    {
+        $form = $this->createForm(TeamTournamentType::class);
+        $form->handleRequest($request);
+        $cacheItem = $randomCache->getItem('tournament_'.$tournament->getId()."_teams");
+        $cacheItem->set($form->getData());
+        $randomCache->save($cacheItem);
+        return $this->renderBlock('global/partials.html.twig', "successAlert", [
+            'message' => "Les équipes ont bien été sauvegardées",
         ]);
     }
 

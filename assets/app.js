@@ -30,7 +30,6 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener("htmx:confirm", function(e) {
     if (!e.target.hasAttribute('hx-confirm')) return;
     e.preventDefault()
-    console.log(e);
     bsConfirm(`${e.detail.question}`, {
         type: 'danger',
         cancelable: true,

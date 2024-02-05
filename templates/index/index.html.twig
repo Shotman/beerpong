@@ -8,11 +8,14 @@
             <p class="card-header display-3">Tournois à venir</p>
             <main class="card-body">
                 {% if commingTournaments|length >= 1 %}
-                <ul class="list-group">
-                {% for tournament in commingTournaments %}
-                    <li class="list-group-item"><a href="{{ url("app_tournament_show",{"id":tourament.id}) }}">{{ tournament.name }}</a></li>
-                {% endfor %}
-                </ul>
+                    <ul class="list-group">
+                    {% for tournament in commingTournaments %}
+                        <li class="list-group-item">
+                            <a href="{{ url("app_tournament_show",{"id":tournament.id}) }}">
+                                {{ tournament.name }} - {{ tournament.date|date("d/m/Y") }}{% if tournament.championship is not null %} - {{ tournament.championship.name }}{% endif %}
+                            </a></li>
+                    {% endfor %}
+                    </ul>
                 {% else %}
                 <p class="card-text">Aucun tournoi à venir</p>
                 {% endif %}

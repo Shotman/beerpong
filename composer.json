@@ -3,6 +3,7 @@
     "license": "proprietary",
     "minimum-stability": "stable",
     "prefer-stable": true,
+    "version": "0.1.0",
     "require": {
         "php": ">=8.3",
         "ext-ctype": "*",

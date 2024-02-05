@@ -23,6 +23,7 @@ class AppExtension extends AbstractExtension
     {
         return [
             new TwigFunction('getCurrentRoute', [AppExtensionRuntime::class, 'getCurrentRoute']),
+            new TwigFunction('tournamentIsStarted', [AppExtensionRuntime::class, 'tournamentIsStarted']),
         ];
     }
 }

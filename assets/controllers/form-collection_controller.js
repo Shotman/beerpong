@@ -7,6 +7,15 @@ export default class extends Controller {
         index    : Number,
         prototype: String,
     }
+    connect() {
+        let container = this.targets.element;
+        container.addEventListener('click', function(event){
+            console.log(event)
+            if(event.target.classList.contains('stimulus-delete')){
+                event.target.closest('.team-collection-item').remove();
+            }
+        });
+    }
 
     addTeamCollectionElement(event)
     {

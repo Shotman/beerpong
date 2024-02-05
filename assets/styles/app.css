@@ -61,3 +61,12 @@ details.accordion-item[open] > .accordion-button::after {
     background-image: var(--bs-accordion-btn-icon);
     transform: var(--bs-accordion-btn-icon-transform);
 }
+
+form.htmx-settling:has(.alert) > .alert{
+    opacity: 1;
+    transition: opacity 2s ease-out;
+}
+
+form:has(.alert) > .alert{
+    opacity: 0;
+}
