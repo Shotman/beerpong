@@ -5,7 +5,7 @@
 {% block body %}
     <section class="bg-body-secondary col-md-10 p-3 mt-2 overflow-y-auto align-self-start">
         <div {{ stimulus_controller('form-collection') }}
-                data-form-collection-index-value="{{ form.teams|length > 0 ? form.teams|length + 1 : 0 }}"
+                data-form-collection-index-value="{{ form.teams|getMaxIndex }}"
                 data-form-collection-prototype-value="{{ form_widget(form.teams.vars.prototype)|e('html_attr') }}"
                 class="container-fluid gap-2"
         >

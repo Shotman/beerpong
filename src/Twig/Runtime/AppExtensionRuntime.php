@@ -17,6 +17,11 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
         // Inject dependencies if needed
     }
 
+    public function getMaxIndex($collection)
+    {
+        return max(array_keys($collection->children)) + 1;
+    }
+
     public function getCurrentRoute()
     {
         return $this->kernel->getContainer()->get('request_stack')->getCurrentRequest()->get('_route');

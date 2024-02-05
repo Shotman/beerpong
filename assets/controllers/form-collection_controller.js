@@ -10,7 +10,6 @@ export default class extends Controller {
     connect() {
         let container = this.targets.element;
         container.addEventListener('click', function(event){
-            console.log(event)
             if(event.target.classList.contains('stimulus-delete')){
                 event.target.closest('.team-collection-item').remove();
             }
@@ -38,7 +37,6 @@ export default class extends Controller {
         collection.indexValue++;
         item.addEventListener('click',function(event){
             if(event.target.classList.contains('stimulus-delete')){
-                collection.indexValue--;
                 item.remove();
             }
         })
