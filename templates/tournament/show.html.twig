@@ -21,13 +21,15 @@
                 {% include 'tournament/_partial/details.html.twig' with { "tournament":tournament } %}
             </div>
         {% endif %}
-        <div class="btn-group">
+        <div class="btn-group mt-2">
+            {% if is_granted("ROLE_ADMIN") %}
             <a class="btn btn-primary"
                href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">{{ "btn.edit"|trans }}</a>
             {% if matches|length == 0 and tournament.extraData.state is not defined %}
                 <button type="button" class="btn btn-success"
                         hx-post="{{ path("app_tournament_finish",{"tournament":tournament.id}) }}">Terminer le tournois
                 </button>
+            {% endif %}
             {% endif %}
             <a class="btn btn-warning" href="{{ path('app_tournament_index') }}">{{ "btn.back"|trans }}</a>
         </div>

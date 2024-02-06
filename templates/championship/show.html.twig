@@ -60,8 +60,10 @@
             </div>
         </div>
         <div class="btn-group mt-2">
+            {% if is_granted("ROLE_ADMIN") %}
             <a class="btn btn-primary"
                href="{{ path('app_championship_edit', {'id': championship.id}) }}">{{ "btn.edit"|trans }}</a>
+            {% endif %}
             <a class="btn btn-warning" href="{{ path('app_championship_index') }}">{{ "btn.back"|trans }}</a>
         </div>
     </div>

@@ -34,6 +34,10 @@ class ChampionshipController extends AbstractController
     ], name: 'app_championship_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_championship_index');
+        }
         $championship = new Championship();
         $form = $this->createForm(ChampionshipType::class, $championship);
         $form->handleRequest($request);
@@ -70,6 +74,10 @@ class ChampionshipController extends AbstractController
     ], name: 'app_championship_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_championship_index');
+        }
         $form = $this->createForm(ChampionshipType::class, $championship);
         $form->handleRequest($request);
 
@@ -88,6 +96,10 @@ class ChampionshipController extends AbstractController
     #[Route('/{id}', name: 'app_championship_delete', methods: ['POST'])]
     public function delete(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_championship_index');
+        }
         if ($this->isCsrfTokenValid('delete'.$championship->getId(), $request->request->get('_token'))) {
             $entityManager->remove($championship);
             $entityManager->flush();

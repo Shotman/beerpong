@@ -37,6 +37,10 @@ class TournamentController extends AbstractController
     ], name: 'app_tournament_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         $tournament = new Tournament();
         $form = $this->createForm(TournamentType::class, $tournament);
         $form->handleRequest($request);
@@ -84,6 +88,10 @@ class TournamentController extends AbstractController
     #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'])]
     public function updateMatch(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         $challongeService->setMatchWinner($tournament, $request);
         $matches = $this->getTournamentMatches($tournament, $challongeService);
         $participants = $this->getTournamentParticipantsDetails($tournament, $challongeService);
@@ -101,6 +109,10 @@ class TournamentController extends AbstractController
     ], name: 'app_tournament_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Tournament $tournament, EntityManagerInterface $entityManager): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         $form = $this->createForm(TournamentType::class, $tournament);
         $form->handleRequest($request);
 
@@ -119,6 +131,10 @@ class TournamentController extends AbstractController
     #[Route('/{id}', name: 'app_tournament_delete', methods: ['DELETE'])]
     public function delete(Request $request, Tournament $id, EntityManagerInterface $entityManager, ChallongeService $challongeService): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         if ($this->isCsrfTokenValid('delete'.$id->getId(), $request->headers->get('x-csrftoken'))) {
             $challongeService->deleteTournament($id);
             $entityManager->remove($id);
@@ -136,6 +152,10 @@ class TournamentController extends AbstractController
     ], name: 'app_tournament_init', methods: ['GET', 'POST'])]
     public function init(Request $request, Tournament $tournament, ChallongeService $challongeService ,PlayerRepository $playerRepository, CacheInterface $randomCache): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         $data = $randomCache->getItem('tournament_'.$tournament->getId()."_teams")->get() ?? null;
         $form = $this->createForm(TeamTournamentType::class, $data);
 
@@ -160,6 +180,10 @@ class TournamentController extends AbstractController
     #[Route('/tournois/{tournament}/finish', name: 'app_tournament_finish', methods: ['POST'])]
     public function finish(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         $challongeService->finalizeTournament($tournament);
         return new JsonResponse('', Response::HTTP_OK,[
             "HX-Redirect" => $this->generateUrl('app_tournament_show', ['id' => $tournament->getId()])
@@ -172,6 +196,10 @@ class TournamentController extends AbstractController
     ], name: 'app_tournament_save', methods: ['POST'])]
     public function save(Request $request, Tournament $tournament ,CacheInterface $randomCache): Response
     {
+        if(!$this->isGranted("ROLE_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         $form = $this->createForm(TeamTournamentType::class);
         $form->handleRequest($request);
         $cacheItem = $randomCache->getItem('tournament_'.$tournament->getId()."_teams");

@@ -24,8 +24,10 @@
                         <div class="btn-group btn-group-sm d-flex align-items-center justify-content-center">
                             <a class="btn btn-primary"
                                href="{{ path('app_championship_show', {'id': championship.id}) }}">{{ "btn.show"|trans }}</a>
+                            {% if is_granted("ROLE_ADMIN") %}
                             <a class="btn btn-secondary"
                                href="{{ path('app_championship_edit', {'id': championship.id}) }}">{{ "btn.edit"|trans }}</a>
+                            {% endif %}
                         </div>
                     </td>
                 </tr>
@@ -36,7 +38,8 @@
             {% endfor %}
             </tbody>
         </table>
-
+        {% if is_granted("ROLE_ADMIN") %}
         <a class="btn btn-success" href="{{ path('app_championship_new') }}">{{ "btn.create"|trans }}</a>
+        {% endif %}
     </div>
 {% endblock %}

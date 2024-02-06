@@ -19,6 +19,8 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
 
     public function getMaxIndex($collection)
     {
+        if(empty($collection->children))
+            return 0;
         return max(array_keys($collection->children)) + 1;
     }
 

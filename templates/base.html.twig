@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html class="h-100">
+<html class="h-100" lang="fr">
 <head>
     <meta charset="UTF-8">
     <title>{% block title %}Welcome!{% endblock %}</title>
@@ -15,20 +15,28 @@
 <body class="d-flex flex-column h-100">
 <header>
     <!-- Fixed navbar -->
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <nav class="navbar navbar-expand-sm navbar-dark fixed-top bg-dark">
         <div class="container-fluid">
-            <a class="navbar-brand" href="/">BeerPong Lyon</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse"
-                    aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+            <a class="navbar-brand" href="javascript:void(0)">BeerPong Lyon !</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mynavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="collapse navbar-collapse" id="navbarCollapse">
-                <ul class="navbar-nav me-auto mb-2 mb-md-0">
+            <div class="collapse navbar-collapse" id="mynavbar">
+                <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link {% if  getCurrentRoute() starts with 'app_tournament_' %} active {% endif %}" href="{{ url("app_tournament_index") }}" >Les tournois</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link {% if getCurrentRoute() starts with 'app_championship_' %} active {% endif %}" href="{{ url("app_championship_index") }}">Les championats</a>
+                    </li>
+                </ul>
+                <ul class="d-flex navbar-nav">
+                    <li class="nav-item">
+                        {% if app.user is not same as(null) %}
+                        <a class="nav-link">{{ app.user.username }}</a>
+                        {% else %}
+                        <a class="nav-link" href="{{ url("app_login") }}">Connexion</a>
+                        {% endif %}
                     </li>
                 </ul>
             </div>
