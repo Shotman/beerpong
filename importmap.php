@@ -65,4 +65,7 @@ return [
     '@ymlluo/bs5dialog/dist/bs5dialog.js' => [
         'version' => '1.0.7',
     ],
+    'push.js' => [
+        'version' => '1.0.12',
+    ],
 ];

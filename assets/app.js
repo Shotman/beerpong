@@ -2,6 +2,7 @@ import './bootstrap.js';
 
 //3rd party libraries
 import 'bootstrap'
+import Push from 'push.js'
 import { alert, confirm, toast, prompt, message, load, i18n } from "@ymlluo/bs5dialog/dist/bs5dialog.js";
 import { Datepicker } from 'vanillajs-datepicker';
 import fr from 'vanillajs-datepicker/locales/fr';
@@ -13,6 +14,7 @@ window.bsToast = toast;
 window.bsPrompt = prompt;
 window.bsMessage = message;
 window.bsLoad = load;
+window.Push = Push;
 i18n.setCurrentLang('fr');
 
 //Global datepicker handler
@@ -40,6 +42,9 @@ document.addEventListener("htmx:confirm", function(e) {
         }
     })
 })
+document.addEventListener("DOMContentLoaded", function() {
+    window.Push.Permission.request();
+});
 
 //custom js imports
 import './js/accordion.js';
