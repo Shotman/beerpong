@@ -217,6 +217,6 @@ class TournamentController extends AbstractController
 
     private function getTournamentParticipantsDetails(Tournament $tournament, ChallongeService $challongeService): array
     {
-        return $challongeService->getParticipantsDetails($tournament);
+        return $challongeService->getParticipantsDetails($tournament,true);
     }
 }

@@ -32,13 +32,14 @@ document.addEventListener('DOMContentLoaded', function () {
 document.addEventListener("htmx:confirm", function(e) {
     if (!e.target.hasAttribute('hx-confirm')) return;
     e.preventDefault()
+    console.log(e.target.dataset)
     bsConfirm(`${e.detail.question}`, {
-        type: 'danger',
+        type: e.target.dataset.type ?? 'danger',
         cancelable: true,
         btnOkText: 'Oui',
         btnCancelText: 'Non',
-        onOk: () => {
-            e.detail.issueRequest()
+        onConfirm: () => {
+            e.detail.issueRequest(true)
         }
     })
 })

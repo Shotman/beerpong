@@ -11,6 +11,8 @@
                     <div class="border-bottom border-black d-flex justify-content-between align-items-center w-100 h-50">
                         <p class="flex-grow-1 mb-0">{{ participants[match.player1_id].name }}</p>
                         <button type="button"
+                                data-warning-type="warning"
+                                hx-confirm="L'équipe {{ participants[match.player1_id].name }} a gagné ?"
                                 hx-include="#matchId{{ match.id }},#player1Id{{ match.id }},#winner1Position{{ match.id }}"
                                 hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click"
                                 hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}"
@@ -19,6 +21,8 @@
                     <div class="border-bottom border-black d-flex justify-content-between align-items-center w-100 h-50">
                         <p class="flex-grow-1 mb-0">{{ participants[match.player2_id].name }}</p>
                         <button type="button"
+                                data-warning-type="warning"
+                                hx-confirm="L'équipe {{ participants[match.player2_id].name }} a gagné ?"
                                 hx-include="#matchId{{ match.id }},#player2Id{{ match.id }},#winner2Position{{ match.id }}"
                                 hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click"
                                 hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}"
