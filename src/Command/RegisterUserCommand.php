@@ -27,8 +27,8 @@ class RegisterUserCommand extends Command
     protected function configure(): void
     {
         $this
-            ->addArgument('username', InputArgument::OPTIONAL, 'Username')
-            ->addOption('roles', null, InputOption::VALUE_NONE, 'roles separated by comma')
+            ->addArgument('username', InputArgument::REQUIRED, 'Username')
+            ->addOption('roles', null, InputOption::VALUE_OPTIONAL, 'roles separated by comma')
         ;
     }
 
