@@ -6,6 +6,7 @@ use App\Entity\Championship;
 use App\Entity\Tournament;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -46,6 +47,11 @@ class TournamentType extends AbstractType
                 'required' => false,
                 'choice_label' => 'name',
                 'autocomplete' => true,
+            ])
+            ->add('paid', CheckboxType::class, [
+                'label' => 'Tournois payant ?',
+                'required' => false,
+                'attr' => ['class' => 'form-check-input'],
             ])
         ;
     }

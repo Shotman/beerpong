@@ -31,6 +31,10 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
     }
 
     public function tournamentIsStarted(Tournament $tournament){
-        return $tournament->getExtraData()["state"] !== "ended" ?? true;
+        $extraData = $tournament->getExtraData();
+        if(array_key_exists("state",$extraData)){
+            return $extraData["state"] !== "ended" ?? true;
+        }
+        return false;
     }
 }

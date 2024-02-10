@@ -20,7 +20,7 @@ class Tournament
     #[ORM\Column(length: 255)]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $challongeId = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
@@ -32,6 +32,9 @@ class Tournament
 
     #[ORM\OneToMany(mappedBy: 'tournament', targetEntity: TournamentResults::class, cascade: ['persist','remove'], fetch: 'EAGER')]
     private Collection $tournamentResults;
+
+    #[ORM\Column]
+    private bool $paid = false;
 
     public function __construct()
     {
@@ -114,7 +117,7 @@ class Tournament
         return $this->challongeId;
     }
 
-    public function setChallongeId(string $challongeId): self
+    public function setChallongeId(?string $challongeId): self
     {
         $this->challongeId = $challongeId;
         return $this;
@@ -123,5 +126,17 @@ class Tournament
     public function __toString(): string
     {
         return $this->name ?? '';
+    }
+
+    public function isPaid(): ?bool
+    {
+        return $this->paid;
+    }
+
+    public function setPaid(bool $paid): static
+    {
+        $this->paid = $paid;
+
+        return $this;
     }
 }

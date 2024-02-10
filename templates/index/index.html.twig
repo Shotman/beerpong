@@ -11,7 +11,7 @@
                     <ul class="list-group">
                     {% for tournament in commingTournaments %}
                         <li class="list-group-item">
-                            <a href="{{ url("app_tournament_show",{"id":tournament.id}) }}">
+                            <a href="{{ path("app_tournament_show",{"id":tournament.id}) }}">
                                 {{ tournament.name }} - {{ tournament.date|date("d/m/Y") }}{% if tournament.championship is not null %} - {{ tournament.championship.name }}{% endif %}
                             </a></li>
                     {% endfor %}
@@ -27,7 +27,7 @@
                 {% if activeChampionships|length >= 1 %}
                 <ul class="list-group">
                 {% for championship in activeChampionships %}
-                    <li class="list-group-item"><a href="{{ url("app_championship_show",{"id":championship.id}) }}">{{ championship.name }}</a></li>
+                    <li class="list-group-item"><a href="{{ path("app_championship_show",{"id":championship.id}) }}">{{ championship.name }}</a></li>
                 {% endfor %}
                 </ul>
                 {% else %}

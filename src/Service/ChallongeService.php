@@ -95,10 +95,11 @@ class ChallongeService
         $this->addParticipantsToTournament($tournament, $teams);
     }
 
-    private function getResults(): array
+    private function getResults($teamsAlias = []): array
     {
         foreach ($this->participants as $participant) {
-            $partners = explode("&", $participant->name);
+            $participantName = array_key_exists($participant->name, $teamsAlias) ? $teamsAlias[$participant->name] : $participant->name;
+            $partners = explode("&", $participantName);
             foreach ($partners as $partner) {
                 $this->formattedParticipants[] = ["name" => trim($partner), "points" => $this->pointMatrix[$participant->final_rank], "rank" => $participant->final_rank];
             }
@@ -112,7 +113,7 @@ class ChallongeService
     /**
      * @throws Exception
      */
-    public function getTournamentDetails($tournament, $refresh = false): array
+    public function getTournamentDetails($tournament, $refresh = false, $teamsAlias): array
     {
         /**
          * @var Tournament $tournamentDb
@@ -125,9 +126,16 @@ class ChallongeService
             })->toArray()];
         }
         $this->getTournament($tournament, $refresh);
-        $tournamentDetails = ["raw" => $this->tournament->tournament, "id" => $this->tournament->tournament->url, "name" => $this->tournament->tournament->name, "date" => new DateTime($this->tournament->tournament->started_at), "number_of_teams" => $this->tournament->tournament->participants_count, "participants" => $this->getResults()];
+        $tournamentDetails = [
+            "raw" => $this->tournament->tournament,
+            "id" => $this->tournament->tournament->url,
+            "name" => $this->tournament->tournament->name,
+            "date" => new DateTime($this->tournament->tournament->started_at),
+            "number_of_teams" => $this->tournament->tournament->participants_count,
+            "participants" => $this->getResults($teamsAlias)
+        ];
         if ($this->saveTournament && $this->tournament->tournament->state == "complete") {
-            $this->saveTournamentData($tournamentDetails);
+            $this->saveTournamentData($tournamentDetails, $teamsAlias);
         }
         return $tournamentDetails;
     }
@@ -166,7 +174,7 @@ class ChallongeService
         }
     }
 
-    private function saveTournamentData(array $tournamentDetails)
+    private function saveTournamentData(array $tournamentDetails, array $teamAlias = [])
     {
         $tournament = $this->tournamentRepository->findOneBy(["challongeId" => $this->tournament->tournament->url]) ?: new Tournament();
         $slugger = new AsciiSlugger();
@@ -175,7 +183,6 @@ class ChallongeService
             $tournament->setDate($tournamentDetails["date"]);
             $tournament->setChallongeId($this->tournament->tournament->url);
             $extraData = ["number_of_teams" => $tournamentDetails["number_of_teams"]];
-            dump($this->tournament->tournament);
             $tournament->setExtraData($extraData);
         }
         if($this->tournament->tournament->state == "complete")
@@ -185,16 +192,7 @@ class ChallongeService
             $tournament->setExtraData($extraData);
         }
         foreach ($tournamentDetails["participants"] as $participant) {
-            $player = $this->playerRepository->findOneBy(["identifier" => strtolower($slugger->slug($participant["name"]))]) ?: new Player();
-            if ($player->getName() == null) {
-                $player->setName($participant["name"]);
-                $this->playerRepository->save($player);
-            }
-            $tournamentResult = new TournamentResults();
-            $tournamentResult->setPlayer($player);
-            $tournamentResult->setPoints($participant["points"]);
-            $tournamentResult->setRank($participant["rank"]);
-            $tournament->addTournamentResult($tournamentResult);
+            $this->savePlayerResults($slugger, $participant, $tournament);
         }
         $this->tournamentRepository->save($tournament);
     }
@@ -278,7 +276,7 @@ class ChallongeService
         ]);
     }
 
-    public function finalizeTournament(Tournament $tournament)
+    public function finalizeTournament(Tournament $tournament, array $teamsAlias = [])
     {
         $query = [
             "api_key" => $this->parameterBag->get("challonge_api_key"),
@@ -286,6 +284,26 @@ class ChallongeService
         $this->client->request("POST",$this->baseUrl.'/tournaments/'.$tournament->getChallongeId().'/finalize.json',[
             "query" => $query,
         ]);
-        $this->saveTournament()->getTournamentDetails($tournament->getChallongeId(),true);
+        $this->saveTournament()->getTournamentDetails($tournament->getChallongeId(),true, $teamsAlias);
+    }
+
+    /**
+     * @param AsciiSlugger $slugger
+     * @param mixed $participant
+     * @param Tournament $tournament
+     * @return void
+     */
+    private function savePlayerResults(AsciiSlugger $slugger, mixed $participant, Tournament $tournament): void
+    {
+        $player = $this->playerRepository->findOneBy(["identifier" => strtolower($slugger->slug($participant["name"]))]) ?: new Player();
+        if ($player->getName() == null) {
+            $player->setName($participant["name"]);
+            $this->playerRepository->save($player);
+        }
+        $tournamentResult = new TournamentResults();
+        $tournamentResult->setPlayer($player);
+        $tournamentResult->setPoints($participant["points"]);
+        $tournamentResult->setRank($participant["rank"]);
+        $tournament->addTournamentResult($tournamentResult);
     }
 }

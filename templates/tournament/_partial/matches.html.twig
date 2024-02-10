@@ -15,7 +15,7 @@
                                 hx-confirm="L'équipe {{ participants[match.player1_id].name }} a gagné ?"
                                 hx-include="#matchId{{ match.id }},#player1Id{{ match.id }},#winner1Position{{ match.id }}"
                                 hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click"
-                                hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}"
+                                hx-post="{{ path("app_tournament_match_update",{"tournament":tournament.id}) }}"
                                 class="float-end btn btn-success rounded-0"><i class="bi bi-check-circle"></i></button>
                     </div>
                     <div class="border-bottom border-black d-flex justify-content-between align-items-center w-100 h-50">
@@ -25,7 +25,7 @@
                                 hx-confirm="L'équipe {{ participants[match.player2_id].name }} a gagné ?"
                                 hx-include="#matchId{{ match.id }},#player2Id{{ match.id }},#winner2Position{{ match.id }}"
                                 hx-swap="outerHTML" hx-target="#showViewContainer" hx-trigger="click"
-                                hx-post="{{ url("app_tournament_match_update",{"tournament":tournament.id}) }}"
+                                hx-post="{{ path("app_tournament_match_update",{"tournament":tournament.id}) }}"
                                 class="float-end btn btn-success rounded-0"><i class="bi bi-check-circle"></i></button>
                     </div>
                     <input id="matchId{{ match.id }}" type="hidden" name="match_id" value="{{ match.id }}">
@@ -38,7 +38,7 @@
         {% endfor %}
     </main>
     <button type="button" hx-swap="innerHTML" hx-trigger="click"
-            hx-get="{{ url("app_tournament_matches",{"id":tournament.id}) }}" hx-target="#tournamentMatches"
+            hx-get="{{ path("app_tournament_matches",{"id":tournament.id}) }}" hx-target="#tournamentMatches"
             class="col-md-2 col-lg-1 btn btn-primary">Actualiser &nbsp;<span
                 class="htmx-indicator spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
     </button>

@@ -2,10 +2,13 @@
 
 namespace App\Form;
 
+use App\Entity\Player;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Event\PreSubmitEvent;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TeamTournamentType extends AbstractType
@@ -15,7 +18,7 @@ class TeamTournamentType extends AbstractType
         $builder
             ->add('teams',CollectionType::class,[
                 'entry_type' => TeamType::class,
-                'entry_options' => ['label' => false, 'allow_delete' => true],
+                'entry_options' => ['label' => false, 'allow_delete' => true, "tournament" => $options["tournament"]],
                 "row_attr" => [
                     "class" => "col-md-6"
                 ],
@@ -33,12 +36,38 @@ class TeamTournamentType extends AbstractType
                 ]
             ])
         ;
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, function (PreSubmitEvent $event) use ($options) {
+            $data = $event->getData();
+            $em = $options["em"];
+            if (!$data) {
+                return;
+            }
+            $teams = $data['teams'];
+            foreach ($teams as $key => $team) {
+                $player1 = $em->getRepository(Player::class)->findOneByIdentifier($team['player1']);
+                $player2 = $em->getRepository(Player::class)->findOneByIdentifier($team['player2']);
+                if(!$player1){
+                    $player1 = new Player();
+                    $player1->setName($team['player1']);
+                    $em->persist($player1);
+                }
+                if(!$player2){
+                    $player2 = new Player();
+                    $player2->setName($team['player2']);
+                    $em->persist($player2);
+                }
+                $em->flush();
+                $data['teams'][$key]['player1'] = $player1->getIdentifier();
+                $data['teams'][$key]['player2'] = $player2->getIdentifier();
+                $event->setData($data);
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
             // Configure your form options here
-        ]);
+        ])->setRequired('em')->setRequired("tournament");
     }
 }

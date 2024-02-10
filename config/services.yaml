@@ -5,6 +5,8 @@
 # https://symfony.com/doc/current/best_practices.html#use-parameters-for-application-configuration
 parameters:
     challonge_api_key: '%env(CHALLONGE_API_KEY)%'
+    router.request_context.scheme: 'https'
+    asset.request_context.secure: true
 services:
     # default configuration for services in *this* file
     _defaults:

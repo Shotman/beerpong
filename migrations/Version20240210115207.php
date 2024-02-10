@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20240209174543 extends AbstractMigration
+final class Version20240210115207 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -23,9 +23,8 @@ final class Version20240209174543 extends AbstractMigration
         $this->addSql('CREATE TABLE championship (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, date_start DATE NOT NULL, date_end DATE NOT NULL)');
         $this->addSql('CREATE TABLE player (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name VARCHAR(255) NOT NULL, identifier VARCHAR(255) NOT NULL)');
         $this->addSql('CREATE UNIQUE INDEX UNIQ_98197A65772E836A ON player (identifier)');
-        $this->addSql('CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, championship_id INTEGER DEFAULT NULL, name VARCHAR(255) NOT NULL, challonge_id VARCHAR(255) DEFAULT NULL, date DATE NOT NULL, extra_data CLOB DEFAULT NULL --(DC2Type:json)
+        $this->addSql('CREATE TABLE tournament (id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, championship_id INTEGER DEFAULT NULL, name VARCHAR(255) NOT NULL, challonge_id VARCHAR(255) DEFAULT NULL, date DATE NOT NULL, paid BOOLEAN NOT NULL, extra_data CLOB DEFAULT NULL --(DC2Type:json)
         , CONSTRAINT FK_BD5FB8D994DDBCE9 FOREIGN KEY (championship_id) REFERENCES championship (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
-        $this->addSql('CREATE UNIQUE INDEX UNIQ_BD5FB8D93CD24588 ON tournament (challonge_id)');
         $this->addSql('CREATE INDEX IDX_BD5FB8D994DDBCE9 ON tournament (championship_id)');
         $this->addSql('CREATE TABLE tournament_results (tournament_id INTEGER NOT NULL, player_id INTEGER NOT NULL, points INTEGER NOT NULL, rank INTEGER NOT NULL, PRIMARY KEY(tournament_id, player_id), CONSTRAINT FK_F4AC1F1E33D1A3E7 FOREIGN KEY (tournament_id) REFERENCES tournament (id) NOT DEFERRABLE INITIALLY IMMEDIATE, CONSTRAINT FK_F4AC1F1E99E6F5DF FOREIGN KEY (player_id) REFERENCES player (id) NOT DEFERRABLE INITIALLY IMMEDIATE)');
         $this->addSql('CREATE INDEX IDX_F4AC1F1E33D1A3E7 ON tournament_results (tournament_id)');

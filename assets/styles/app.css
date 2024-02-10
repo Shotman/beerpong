@@ -6,7 +6,7 @@ main.flex-grow-1 > .container-fluid {
     padding: 60px 15px;
 }
 
-label.form-label.required:after {
+label.form-label.required:after,label.form-check-label.required:after {
     content: "*";
     color: red;
 }
