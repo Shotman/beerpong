@@ -16,7 +16,7 @@ class AdminFilter extends SQLFilter
         }
         $baseCond = sprintf('%s.admin_id = %s', $targetTableAlias, $this->getParameter('admin'));
         if($this->getParameter('admin') !== null){
-            return $baseCond.sprintf(' OR %s.admin_id IS NULL', $targetTableAlias);
+            return $baseCond.sprintf(' OR %s.public', $targetTableAlias);
         }
         return  $baseCond;
     }

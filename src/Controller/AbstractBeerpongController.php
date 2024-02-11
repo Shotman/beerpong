@@ -10,20 +10,16 @@ abstract class AbstractBeerpongController extends AbstractController
 {
     public function __construct(Security $security, EntityManagerInterface $em)
     {
-        if(!is_null($security->getUser()) && in_array("ROLE_ADMIN",$security->getUser()->getRoles()))
-        {
-            $em->getConfiguration()->addFilter('admin', 'App\Filters\AdminFilter');
-            $filter = $em->getFilters()->enable('admin');
-            $filter->setParameter('admin', $security->getUser()->getId());
-        }
-        if($security->getUser() === null){
-            $em->getConfiguration()->addFilter('admin', 'App\Filters\AdminFilter');
-            $filter = $em->getFilters()->enable('admin');
-            $filter->setParameter('admin', NULL);
-        }
-        if(!is_null($security->getUser()) && in_array("ROLE_SUPER_ADMIN",$security->getUser()->getRoles())){
-            $em->getConfiguration()->addFilter('admin', 'App\Filters\AdminFilter');
-            $em->getFilters()->suspend("admin");
-        }
+//        if(!is_null($security->getUser()) && in_array("ROLE_ADMIN",$security->getUser()->getRoles()))
+//        {
+//            $em->getConfiguration()->addFilter('admin', 'App\Filters\AdminFilter');
+//            $filter = $em->getFilters()->enable('admin');
+//            $filter->setParameter('admin', $security->getUser()->getId());
+//        }
+//        if($security->getUser() === null){
+//            $em->getConfiguration()->addFilter('admin', 'App\Filters\AdminFilter');
+//            $filter = $em->getFilters()->enable('admin');
+//            $filter->setParameter('admin', NULL);
+//        }
     }
 }
