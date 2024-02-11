@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Tournament;
+use App\Form\ImportTournamentType;
 use App\Form\TeamTournamentType;
 use App\Form\TournamentType;
 use App\Repository\PlayerRepository;
@@ -22,7 +23,7 @@ use Symfony\Contracts\Cache\CacheInterface;
     "fr" => "/tournois",
     "en" => "/tournaments",
 ])]
-class TournamentController extends AbstractController
+class TournamentController extends AbstractBeerpongController
 {
     #[Route('/', name: 'app_tournament_index', methods: ['GET'])]
     public function index(TournamentRepository $tournamentRepository): Response
@@ -50,6 +51,7 @@ class TournamentController extends AbstractController
             $tournament->setExtraData([
                 'game' => $request->get('tournament')['gameName']
             ]);
+            $tournament->setAdmin($this->getUser());
             $entityManager->persist($tournament);
             $entityManager->flush();
 
@@ -62,7 +64,7 @@ class TournamentController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_tournament_show', methods: ['GET'])]
+    #[Route('/{id}', name: 'app_tournament_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(Tournament $tournament, ChallongeService $challongeService): Response
     {
         $matches = $this->getTournamentMatches($tournament, $challongeService);
@@ -103,7 +105,6 @@ class TournamentController extends AbstractController
         ]);
     }
 
-
     #[Route(path: [
         "fr" => "/{id}/modifier",
         "en" => "/{id}/edit",
@@ -129,7 +130,7 @@ class TournamentController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_tournament_delete', methods: ['DELETE'])]
+    #[Route('/{id}', name: 'app_tournament_delete', requirements: ['id' => '\d+'] ,methods: ['DELETE'])]
     public function delete(Request $request, Tournament $id, EntityManagerInterface $entityManager, ChallongeService $challongeService): Response
     {
         if(!$this->isGranted("ROLE_ADMIN")){

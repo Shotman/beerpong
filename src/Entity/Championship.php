@@ -28,6 +28,9 @@ class Championship
     #[ORM\OneToMany(mappedBy: 'championship', targetEntity: Tournament::class)]
     private Collection $tournaments;
 
+    #[ORM\ManyToOne(inversedBy: 'championships')]
+    private ?User $admin = null;
+
     public function __construct()
     {
         $this->tournaments = new ArrayCollection();
@@ -117,5 +120,17 @@ class Championship
         $total = $endDate->diff($startDate)->days;
         $elapsed = $now->diff($startDate)->days;
         return round(($elapsed / $total) * 100);
+    }
+
+    public function getAdmin(): ?User
+    {
+        return $this->admin;
+    }
+
+    public function setAdmin(?User $admin): static
+    {
+        $this->admin = $admin;
+
+        return $this;
     }
 }

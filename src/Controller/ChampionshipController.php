@@ -9,7 +9,6 @@ use App\Repository\ChampionshipRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
     "fr" => "/championnats",
     "en" => "/championships",
 ])]
-class ChampionshipController extends AbstractController
+class ChampionshipController extends AbstractBeerpongController
 {
     #[Route('/', name: 'app_championship_index', methods: ['GET'])]
     public function index(ChampionshipRepository $championshipRepository): Response

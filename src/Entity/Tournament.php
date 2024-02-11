@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: TournamentRepository::class)]
 class Tournament
 {
-    use HasExtraData;
+    use Traits\HasExtraData;
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -35,6 +35,12 @@ class Tournament
 
     #[ORM\Column]
     private bool $paid = false;
+
+    #[ORM\ManyToOne(inversedBy: 'tournaments')]
+    private ?User $admin = null;
+
+    #[ORM\Column]
+    private bool $public = false;
 
     public function __construct()
     {
@@ -136,6 +142,30 @@ class Tournament
     public function setPaid(bool $paid): static
     {
         $this->paid = $paid;
+
+        return $this;
+    }
+
+    public function getAdmin(): ?User
+    {
+        return $this->admin;
+    }
+
+    public function setAdmin(?User $admin): static
+    {
+        $this->admin = $admin;
+
+        return $this;
+    }
+
+    public function isPublic(): ?bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): static
+    {
+        $this->public = $public;
 
         return $this;
     }

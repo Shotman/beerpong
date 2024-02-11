@@ -17,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class TestController extends AbstractController
+class TestController extends AbstractBeerpongController
 {
     #[Route('/test/{championship}', name: 'app_test', env: 'dev', defaults: ['championship' => null])]
     public function index(

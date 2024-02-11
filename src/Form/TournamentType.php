@@ -53,6 +53,11 @@ class TournamentType extends AbstractType
                 'required' => false,
                 'attr' => ['class' => 'form-check-input'],
             ])
+            ->add('public', CheckboxType::class, [
+                'label' => 'Tournois public ?',
+                'required' => false,
+                'attr' => ['class' => 'form-check-input'],
+            ])
         ;
     }
 

@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UserRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -26,6 +28,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
+
+    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Championship::class)]
+    private Collection $championships;
+
+    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Tournament::class)]
+    private Collection $tournaments;
+
+    public function __construct()
+    {
+        $this->championships = new ArrayCollection();
+        $this->tournaments = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -95,5 +109,65 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    /**
+     * @return Collection<int, Championship>
+     */
+    public function getChampionships(): Collection
+    {
+        return $this->championships;
+    }
+
+    public function addChampionship(Championship $championship): static
+    {
+        if (!$this->championships->contains($championship)) {
+            $this->championships->add($championship);
+            $championship->setAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeChampionship(Championship $championship): static
+    {
+        if ($this->championships->removeElement($championship)) {
+            // set the owning side to null (unless already changed)
+            if ($championship->getAdmin() === $this) {
+                $championship->setAdmin(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Tournament>
+     */
+    public function getTournaments(): Collection
+    {
+        return $this->tournaments;
+    }
+
+    public function addTournament(Tournament $tournament): static
+    {
+        if (!$this->tournaments->contains($tournament)) {
+            $this->tournaments->add($tournament);
+            $tournament->setAdmin($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTournament(Tournament $tournament): static
+    {
+        if ($this->tournaments->removeElement($tournament)) {
+            // set the owning side to null (unless already changed)
+            if ($tournament->getAdmin() === $this) {
+                $tournament->setAdmin(null);
+            }
+        }
+
+        return $this;
     }
 }

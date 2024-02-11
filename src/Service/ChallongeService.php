@@ -113,7 +113,7 @@ class ChallongeService
     /**
      * @throws Exception
      */
-    public function getTournamentDetails($tournament, $refresh = false, $teamsAlias): array
+    public function getTournamentDetails($tournament, $refresh = false, $teamsAlias = []): array
     {
         /**
          * @var Tournament $tournamentDb
