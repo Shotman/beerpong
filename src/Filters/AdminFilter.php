@@ -14,10 +14,6 @@ class AdminFilter extends SQLFilter
         if(!$targetEntity->getReflectionClass()->hasProperty('admin')){
             return '';
         }
-        $baseCond = sprintf('%s.admin_id = %s', $targetTableAlias, $this->getParameter('admin'));
-        if($this->getParameter('admin') !== null){
-            return $baseCond.sprintf(' OR %s.public', $targetTableAlias);
-        }
-        return  $baseCond;
+        return sprintf('%s.admin_id = %s', $targetTableAlias, $this->getParameter('admin')).sprintf(' OR %s.public', $targetTableAlias);
     }
 }
