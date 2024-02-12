@@ -37,4 +37,20 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
         }
         return false;
     }
+
+    public function adminCreatedTournament($user,$tournament)
+    {
+        if(in_array("ROLE_SUPER_ADMIN",$user->getRoles())){
+            return true;
+        }
+        return $user === $tournament->getAdmin();
+    }
+
+    public function adminCreatedChampionship($user,$championship)
+    {
+        if(in_array("ROLE_SUPER_ADMIN",$user->getRoles())){
+            return true;
+        }
+        return $user === $championship->getAdmin();
+    }
 }

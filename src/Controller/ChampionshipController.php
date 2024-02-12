@@ -73,9 +73,10 @@ class ChampionshipController extends AbstractBeerpongController
     ], name: 'app_championship_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
-        if(!$this->isGranted("ROLE_ADMIN")){
+        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $championship->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_championship_index');
+            return $this->redirectToRoute('app_tournament_index');
         }
         $form = $this->createForm(ChampionshipType::class, $championship);
         $form->handleRequest($request);
@@ -88,16 +89,17 @@ class ChampionshipController extends AbstractBeerpongController
 
         return $this->render('championship/edit.html.twig', [
             'championship' => $championship,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
     #[Route('/{id}', name: 'app_championship_delete', methods: ['POST'])]
     public function delete(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
-        if(!$this->isGranted("ROLE_ADMIN")){
+        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $championship->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_championship_index');
+            return $this->redirectToRoute('app_tournament_index');
         }
         if ($this->isCsrfTokenValid('delete'.$championship->getId(), $request->request->get('_token'))) {
             $entityManager->remove($championship);

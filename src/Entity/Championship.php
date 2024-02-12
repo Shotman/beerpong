@@ -31,6 +31,9 @@ class Championship
     #[ORM\ManyToOne(inversedBy: 'championships')]
     private ?User $admin = null;
 
+    #[ORM\Column]
+    private bool $public = false;
+
     public function __construct()
     {
         $this->tournaments = new ArrayCollection();
@@ -130,6 +133,18 @@ class Championship
     public function setAdmin(?User $admin): static
     {
         $this->admin = $admin;
+
+        return $this;
+    }
+
+    public function isPublic(): bool
+    {
+        return $this->public;
+    }
+
+    public function setPublic(bool $public): static
+    {
+        $this->public = $public;
 
         return $this;
     }

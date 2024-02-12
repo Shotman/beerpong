@@ -22,9 +22,9 @@
             </div>
         {% endif %}
         <div class="btn-group mt-2">
-            {% if is_granted("ROLE_ADMIN") %}
+            {% if is_granted("ROLE_ADMIN") and adminCreatedTournament(app.user,tournament)  %}
             <a class="btn btn-primary"
-               href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">{{ "btn.edit"|trans }}</a>
+               href="{{ path("app_tournament_edit", { "id": tournament.id } ) }}">{{ "btn.edit"|trans }}</a>
             {% if matches|length == 0 and tournament.extraData.state is not defined %}
                 <button type="button" class="btn btn-success"
                         hx-post="{{ path("app_tournament_finish",{"tournament":tournament.id}) }}">Terminer le tournois
