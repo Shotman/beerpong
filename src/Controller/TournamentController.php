@@ -70,7 +70,7 @@ class TournamentController extends AbstractBeerpongController
     #[Route('/{id}', name: 'app_tournament_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(Tournament $tournament, ChallongeService $challongeService): Response
     {
-        if(!$tournament->isPublic() || !$this->isGranted("ROLE_ADMIN") && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN")){
+        if(!$tournament->isPublic() || !$this->isGranted("ROLE_ADMIN") && !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN")){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
         }
@@ -98,7 +98,7 @@ class TournamentController extends AbstractBeerpongController
     #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'], schemes: ["https"])]
     public function updateMatch(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
     {
-        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
         if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
@@ -119,7 +119,7 @@ class TournamentController extends AbstractBeerpongController
     ], name: 'app_tournament_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Tournament $tournament, EntityManagerInterface $entityManager): Response
     {
-        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
         if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
@@ -142,7 +142,7 @@ class TournamentController extends AbstractBeerpongController
     #[Route('/{id}', name: 'app_tournament_delete', requirements: ['id' => '\d+'] ,methods: ['DELETE'])]
     public function delete(Request $request, Tournament $id, EntityManagerInterface $entityManager, ChallongeService $challongeService): Response
     {
-        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $id->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $id->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
         if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
@@ -173,7 +173,7 @@ class TournamentController extends AbstractBeerpongController
         SluggerInterface $slugger
     ): Response
     {
-        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
         if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
@@ -236,7 +236,7 @@ class TournamentController extends AbstractBeerpongController
     #[Route('/tournois/{tournament}/finish', name: 'app_tournament_finish', methods: ['POST'])]
     public function finish(Request $request, Tournament $tournament, ChallongeService $challongeService, CacheInterface $randomCache): Response
     {
-        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
         if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
@@ -254,7 +254,7 @@ class TournamentController extends AbstractBeerpongController
     ], name: 'app_tournament_save', methods: ['POST'])]
     public function save(Request $request, Tournament $tournament ,CacheInterface $randomCache, EntityManagerInterface $em): Response
     {
-        $rightAdminOrSuperAdmin = $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
         if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
