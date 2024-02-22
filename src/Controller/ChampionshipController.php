@@ -9,6 +9,7 @@ use App\Repository\ChampionshipRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -93,7 +94,7 @@ class ChampionshipController extends AbstractBeerpongController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_championship_delete', methods: ['POST'])]
+    #[Route('/delete/{id}', name: 'app_championship_delete', methods: ['DELETE'])]
     public function delete(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
         $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $championship->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
@@ -101,11 +102,10 @@ class ChampionshipController extends AbstractBeerpongController
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
         }
-        if ($this->isCsrfTokenValid('delete'.$championship->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($championship);
-            $entityManager->flush();
-        }
-
-        return $this->redirectToRoute('app_championship_index', [], Response::HTTP_SEE_OTHER);
+        $entityManager->remove($championship);
+        $entityManager->flush();
+        return new JsonResponse('', Response::HTTP_OK,[
+            "HX-Redirect" => $this->generateUrl('app_championship_index')
+        ]);
     }
 }

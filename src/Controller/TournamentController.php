@@ -139,7 +139,7 @@ class TournamentController extends AbstractBeerpongController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_tournament_delete', requirements: ['id' => '\d+'] ,methods: ['DELETE'])]
+    #[Route('/delete/{id}', name: 'app_tournament_delete', requirements: ['id' => '\d+'] ,methods: ['DELETE'])]
     public function delete(Request $request, Tournament $id, EntityManagerInterface $entityManager, ChallongeService $challongeService): Response
     {
         $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $id->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
