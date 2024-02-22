@@ -3,7 +3,9 @@
 namespace App\Form;
 
 use App\Entity\Championship;
+use phpDocumentor\Reflection\Types\Boolean;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,6 +40,11 @@ class ChampionshipType extends AbstractType
                     'class' => 'input date datepicker-input',
                     "autocomplete" => "off",
                 ],
+            ])
+            ->add("public",CheckboxType::class,[
+                'label' => 'Championnat public ?',
+                'required' => true,
+                'attr' => ['autocomplete' => 'off'],
             ])
         ;
     }

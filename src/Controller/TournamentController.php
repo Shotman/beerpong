@@ -70,6 +70,10 @@ class TournamentController extends AbstractBeerpongController
     #[Route('/{id}', name: 'app_tournament_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(Tournament $tournament, ChallongeService $challongeService): Response
     {
+        if(!$tournament->isPublic() || !$this->isGranted("ROLE_ADMIN") && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN")){
+            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+            return $this->redirectToRoute('app_tournament_index');
+        }
         $matches = $this->getTournamentMatches($tournament, $challongeService);
         $participants = $this->getTournamentParticipantsDetails($tournament, $challongeService);
         return $this->render('tournament/show.html.twig', [
@@ -161,6 +165,7 @@ class TournamentController extends AbstractBeerpongController
     public function init(
         Request $request,
         Tournament $tournament,
+        TournamentRepository $tournamentRepository,
         ChallongeService $challongeService,
         PlayerRepository $playerRepository,
         CacheInterface $randomCache,
@@ -182,26 +187,43 @@ class TournamentController extends AbstractBeerpongController
         $form->handleRequest($request);
 
         if($form->isSubmitted()){
-            $teamNamesAssoc = [];
-            $teams = [];
-            foreach ($request->get('team_tournament')['teams'] as $team){
-                $player1Slug = $slugger->slug($team["player1"]);
-                $player2Slug = $slugger->slug($team["player2"]);
-                $player1 = $playerRepository->findOneBy(['identifier' => $player1Slug]);
-                $player2 = $playerRepository->findOneBy(['identifier' => $player2Slug]);
-                $tmpTeam = new Team($player1, $player2, $playerRepository);
-                if($team["teamName"]){
-                    $tmpTeam->setTeamName($team["teamName"]);
+            if(!$tournament->getExtraData()["createTournamentResponse"]) {
+                $teamNamesAssoc = [];
+                $teams = [];
+                foreach ($request->get('team_tournament')['teams'] as $team) {
+                    $player1Slug = $slugger->slug($team["player1"]);
+                    $player2Slug = $slugger->slug($team["player2"]);
+                    $player1 = $playerRepository->findOneBy(['identifier' => $player1Slug]);
+                    $player2 = $playerRepository->findOneBy(['identifier' => $player2Slug]);
+                    $tmpTeam = new Team($player1, $player2, $playerRepository);
+                    if ($team["teamName"]) {
+                        $tmpTeam->setTeamName($team["teamName"]);
+                    }
+                    $teamNamesAssoc[$tmpTeam->getTeamName()] = $tmpTeam->getPlayerTeamName();
+                    $teams[] = $tmpTeam;
                 }
-                $teamNamesAssoc[$tmpTeam->getTeamName()] = $tmpTeam->getPlayerTeamName();
-                $teams[] = $tmpTeam;
+                $teamsCache = $randomCache->getItem('tournament_' . $tournament->getId() . "_teamsNames");
+                $teamsCache->set($teamNamesAssoc);
+                $randomCache->save($teamsCache);
+                $createTournamentResponse = $challongeService->createTournament($tournament, $teams);
+                if ($createTournamentResponse instanceof \Exception) {
+                    $this->addFlash('error', $createTournamentResponse->getMessage());
+                    return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+                }
+                $tournament->setExtraData(["createTournamentResponse" => $createTournamentResponse]);
+                $tournament->setChallongeId($createTournamentResponse);
+                $tournamentRepository->save($tournament);
             }
-            $teamsCache = $randomCache->getItem('tournament_'.$tournament->getId()."_teamsNames");
-            $teamsCache->set($teamNamesAssoc);
-            $randomCache->save($teamsCache);
-            $challongeService->createTournament($tournament, $teams);
-            $challongeService->startTournament($tournament);
-            $randomCache->delete('tournament_'.$tournament->getId()."_teams");
+            $randomizeTournamentResponse = $challongeService->randomizeTournament($tournament);
+            if($randomizeTournamentResponse instanceof \Exception){
+                $this->addFlash('error', $randomizeTournamentResponse->getMessage());
+                return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+            }
+            $startTournamentResponse = $challongeService->startTournament($tournament);
+            if($startTournamentResponse instanceof \Exception){
+                $this->addFlash('error', $startTournamentResponse->getMessage());
+                return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+            }
             return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
         }
 
@@ -221,7 +243,6 @@ class TournamentController extends AbstractBeerpongController
         }
         $cacheItem = $randomCache->getItem('tournament_'.$tournament->getId()."_teamsNames");
         $challongeService->finalizeTournament($tournament, $cacheItem->get());
-        $randomCache->delete('tournament_'.$tournament->getId()."_teamsName");
         return new JsonResponse('', Response::HTTP_OK,[
             "HX-Redirect" => $this->generateUrl('app_tournament_show', ['id' => $tournament->getId()])
         ]);

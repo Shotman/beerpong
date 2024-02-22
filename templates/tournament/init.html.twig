@@ -16,9 +16,12 @@
                 {% for team in form.teams %}
                     <div class="team-collection-item shadow p-3 col-md-5 col-lg-3 col-sm-10 bg-white">
                         <p class="h3 bold">Équipe </p>
+                        {{ form_row(team.teamName) }}
                         {{ form_row(team.player1) }}
                         {{ form_row(team.player2) }}
+                        {% if team.paid is defined %}
                         {{ form_row(team.paid) }}
+                        {% endif %}
                         {{ form_row(team.delete) }}
                     </div>
                 {% endfor %}

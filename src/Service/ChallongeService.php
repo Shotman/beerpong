@@ -155,10 +155,9 @@ class ChallongeService
     /**
      * @param $tournamentChallonge
      * @param Team[] $teams
-     * @return void
      * @throws \Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface
      */
-    private function addParticipantsToTournament($tournamentChallonge, array $teams): void
+    private function addParticipantsToTournament($tournamentChallonge, array $teams)
     {
         $participants = [];
         foreach ($teams as $team) {
@@ -167,10 +166,9 @@ class ChallongeService
         $participants = json_encode(["participants" => $participants]);
         $query = ["api_key" => $this->parameterBag->get("challonge_api_key"),];
         try {
-            $this->client->request("POST", $this->baseUrl . "/tournaments/" . $tournamentChallonge->getChallongeId() . "/participants/bulk_add.json", ["query" => $query, "body" => $participants, "headers" => ["Content-Type" => "application/json"]]);
-            $this->randomizeTournament($tournamentChallonge);
+            return $this->client->request("POST", $this->baseUrl . "/tournaments/" . $tournamentChallonge->getChallongeId() . "/participants/bulk_add.json", ["query" => $query, "body" => $participants, "headers" => ["Content-Type" => "application/json"]]);
         } catch (Exception $exception) {
-            dd($exception);
+            return $exception;
         }
     }
 
@@ -203,16 +201,26 @@ class ChallongeService
         return $tournamentResponse->getContent();
     }
 
-    private function randomizeTournament($tournamentChallonge)
+    public function randomizeTournament($tournamentChallonge)
     {
         $query = ["api_key" => $this->parameterBag->get("challonge_api_key"),];
-        $this->client->request("POST", $this->baseUrl . "/tournaments/" . $tournamentChallonge->getChallongeId() . "/participants/randomize.json", ["query" => $query,]);
+        try{
+            return $this->client->request("POST", $this->baseUrl . "/tournaments/" . $tournamentChallonge->getChallongeId() . "/participants/randomize.json", ["query" => $query,]);
+        }
+        catch (Exception $exception){
+            return $exception;
+        }
     }
 
     public function startTournament($tournamentChallonge): mixed
     {
         $query = ["api_key" => $this->parameterBag->get("challonge_api_key"), "include_matches" => 1];
-        return $this->client->request("POST", $this->baseUrl . "/tournaments/" . $tournamentChallonge->getChallongeId() . "/start.json", ["query" => $query,])->getContent();
+        try{
+            return $this->client->request("POST", $this->baseUrl . "/tournaments/" . $tournamentChallonge->getChallongeId() . "/start.json", ["query" => $query,])->getContent();
+        }
+        catch (\Exception $e){
+            return $e;
+        }
     }
 
     public function deleteTournament(Tournament $tournament): void
