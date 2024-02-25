@@ -46,17 +46,18 @@ class TeamTournamentType extends AbstractType
             foreach ($teams as $key => $team) {
                 $player1 = $em->getRepository(Player::class)->findOneByIdentifier($team['player1']);
                 $player2 = $em->getRepository(Player::class)->findOneByIdentifier($team['player2']);
-                if(!$player1){
+                if(is_null($player1)){
                     $player1 = new Player();
                     $player1->setName($team['player1']);
                     $em->persist($player1);
+                    $em->flush();
                 }
-                if(!$player2){
+                if(is_null($player2)){
                     $player2 = new Player();
                     $player2->setName($team['player2']);
                     $em->persist($player2);
+                    $em->flush();
                 }
-                $em->flush();
                 $data['teams'][$key]['player1'] = $player1->getIdentifier();
                 $data['teams'][$key]['player2'] = $player2->getIdentifier();
                 $event->setData($data);

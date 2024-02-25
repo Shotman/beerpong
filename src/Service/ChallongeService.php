@@ -92,7 +92,7 @@ class ChallongeService
             $tournament->setChallongeId($tournamentChallonge->url);
             $this->tournamentRepository->save($tournament);
         }
-        $this->addParticipantsToTournament($tournament, $teams);
+        return $this->addParticipantsToTournament($tournament, $teams);
     }
 
     private function getResults($teamsAlias = []): array
@@ -261,8 +261,7 @@ class ChallongeService
             $participants = array_map(function ($participant) {
                 return $participant->participant;
             }, json_decode($particpantsResponse->getContent()));
-            $participants = array_combine(array_column($participants, "id"), $participants);
-            return $participants;
+            return array_combine(array_column($participants, "id"), $participants);
         }, $beta);
         return $participants;
     }

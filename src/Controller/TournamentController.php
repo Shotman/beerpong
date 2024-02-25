@@ -70,8 +70,10 @@ class TournamentController extends AbstractBeerpongController
     #[Route('/{id}', name: 'app_tournament_show', requirements: ['id' => '\d+'], methods: ['GET'])]
     public function show(Tournament $tournament, ChallongeService $challongeService): Response
     {
-        if(!$tournament->isPublic() || !$this->isGranted("ROLE_ADMIN") && !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN")){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
+        $flashMessage = "Vous n'avez pas les droits pour effectuer cette action";
+        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
+        if(!$tournament->isPublic() && $rightAdminOrSuperAdmin){
+            $this->addFlash('error', $flashMessage);
             return $this->redirectToRoute('app_tournament_index');
         }
         $matches = $this->getTournamentMatches($tournament, $challongeService);
@@ -187,7 +189,7 @@ class TournamentController extends AbstractBeerpongController
         $form->handleRequest($request);
 
         if($form->isSubmitted()){
-            if(!$tournament->getExtraData()["createTournamentResponse"]) {
+            if(!array_key_exists("createTournamentResponse",$tournament->getExtraData())) {
                 $teamNamesAssoc = [];
                 $teams = [];
                 foreach ($request->get('team_tournament')['teams'] as $team) {
@@ -211,7 +213,6 @@ class TournamentController extends AbstractBeerpongController
                     return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
                 }
                 $tournament->setExtraData(["createTournamentResponse" => $createTournamentResponse]);
-                $tournament->setChallongeId($createTournamentResponse);
                 $tournamentRepository->save($tournament);
             }
             $randomizeTournamentResponse = $challongeService->randomizeTournament($tournament);
