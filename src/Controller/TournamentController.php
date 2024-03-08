@@ -97,7 +97,7 @@ class TournamentController extends AbstractBeerpongController
         ]);
     }
 
-    #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'], schemes: ["https"])]
+    #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'])]
     public function updateMatch(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
     {
         $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
