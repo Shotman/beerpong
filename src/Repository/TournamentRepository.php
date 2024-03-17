@@ -7,6 +7,7 @@ use App\Entity\Tournament;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @extends ServiceEntityRepository<Tournament>
@@ -28,6 +29,20 @@ class TournamentRepository extends ServiceEntityRepository
     {
         $this->_em->persist($tournament);
         $this->_em->flush();
+    }
+
+    public function findAllFiltered(?UserInterface $user = null, bool $seeAll = false)
+    {
+        $qb = $this->createQueryBuilder("t");
+        $qb->where("t.public = 1");
+        if(!$seeAll && !is_null($user)){
+            $qb->orWhere("t.admin = :admin")
+                ->setParameter('admin',$user->getId());
+        }
+        if($seeAll){
+            $qb->where("1 == 1");
+        }
+        return $qb->getQuery()->getResult();
     }
 
 //    /**
@@ -59,8 +74,8 @@ class TournamentRepository extends ServiceEntityRepository
         return $this->createQueryBuilder('t')
             ->where('t.date >= :val')
             ->andWhere('t.date <= :val2')
-            ->setParameter('val', new \DateTime('now'))
-            ->setParameter('val2', new \DateTime('+1 month'))
+            ->setParameter('val', (new \DateTime('now'))->setTime(0,0))
+            ->setParameter('val2', (new \DateTime('+2 weeks'))->setTime(23,59,59))
             ->orderBy('t.date', 'ASC')
             ->getQuery()
             ->getResult()

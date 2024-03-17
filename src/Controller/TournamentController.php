@@ -3,15 +3,16 @@
 namespace App\Controller;
 
 use App\Entity\Tournament;
-use App\Form\ImportTournamentType;
 use App\Form\TeamTournamentType;
 use App\Form\TournamentType;
+use App\Repository\ChampionshipRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TournamentRepository;
 use App\Service\ChallongeService;
 use App\Structs\Team;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -23,13 +24,15 @@ use Symfony\Contracts\Cache\CacheInterface;
     "fr" => "/tournois",
     "en" => "/tournaments",
 ])]
-class TournamentController extends AbstractBeerpongController
+class TournamentController extends AbstractController
 {
     #[Route('/', name: 'app_tournament_index', methods: ['GET'])]
-    public function index(TournamentRepository $tournamentRepository): Response
+    public function index(TournamentRepository $tournamentRepository,Security $security): Response
     {
+        $seeAll = $this->isGranted("LIST_ALL_CHAMPIONSHIP_TOURNAMENT");
+        $user = $security->getUser();
         return $this->render('tournament/index.html.twig', [
-            'tournaments' => $tournamentRepository->findAll(),
+            'tournaments' => $tournamentRepository->findAllFiltered($user,$seeAll),
         ]);
     }
 
@@ -37,9 +40,9 @@ class TournamentController extends AbstractBeerpongController
         "fr" => "/nouveau",
         "en" => "/new",
     ], name: 'app_tournament_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, ChampionshipRepository $championshipRepository): Response
     {
-        if(!$this->isGranted("ROLE_ADMIN")){
+        if(!$this->isGranted("CREATE_CHAMPIONSHIP_TOURNAMENT")){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
         }
@@ -52,7 +55,8 @@ class TournamentController extends AbstractBeerpongController
                 'game' => $request->get('tournament')['gameName']
             ]);
             if($request->get("tournament")["championship"]){
-                $tournament->setPublic($request->get("tournament")["championship"]->isPublic());
+                $championship = $championshipRepository->find((int)$request->get("tournament")["championship"]);
+                $tournament->setPublic($championship->isPublic());
             }
             $tournament->setAdmin($this->getUser());
             $entityManager->persist($tournament);
@@ -63,7 +67,7 @@ class TournamentController extends AbstractBeerpongController
 
         return $this->render('tournament/new.html.twig', [
             'tournament' => $tournament,
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -97,11 +101,10 @@ class TournamentController extends AbstractBeerpongController
         ]);
     }
 
-    #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'], schemes: ["https"])]
+    #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'])]
     public function updateMatch(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
     {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
+        if(!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT")){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
         }
@@ -121,8 +124,7 @@ class TournamentController extends AbstractBeerpongController
     ], name: 'app_tournament_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Tournament $tournament, EntityManagerInterface $entityManager): Response
     {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
+        if(!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT",$tournament)){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
         }
@@ -141,13 +143,17 @@ class TournamentController extends AbstractBeerpongController
         ]);
     }
 
-    #[Route('/delete/{id}', name: 'app_tournament_delete', requirements: ['id' => '\d+'] ,methods: ['DELETE'])]
+    #[Route([
+        "fr" => "/{id}/supprimer",
+        "en" => "/{id}/delete",
+    ], name: 'app_tournament_delete', requirements: ['id' => '\d+'] ,methods: ['DELETE'])]
     public function delete(Request $request, Tournament $id, EntityManagerInterface $entityManager, ChallongeService $challongeService): Response
     {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $id->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
+        if(!$this->isGranted("DELETE_CHAMPIONSHIP_TOURNAMENT",$id)){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_tournament_index');
+            return new Response('',Response::HTTP_FORBIDDEN,[
+                "HX-Refresh" => true,
+            ]);
         }
         if ($this->isCsrfTokenValid('delete'.$id->getId(), $request->headers->get('x-csrftoken'))) {
             $challongeService->deleteTournament($id);
@@ -234,7 +240,7 @@ class TournamentController extends AbstractBeerpongController
         ]);
     }
 
-    #[Route('/tournois/{tournament}/finish', name: 'app_tournament_finish', methods: ['POST'])]
+    #[Route('/{tournament}/finish', name: 'app_tournament_finish')]
     public function finish(Request $request, Tournament $tournament, ChallongeService $challongeService, CacheInterface $randomCache): Response
     {
         $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");

@@ -24,7 +24,7 @@
                         <div class="btn-group btn-group-sm d-flex align-items-center justify-content-center">
                             <a class="btn btn-primary"
                                href="{{ path('app_championship_show', {'id': championship.id}) }}">{{ "btn.show"|trans }}</a>
-                            {% if is_granted("ROLE_ADMIN") and adminCreatedChampionship(app.user,championship)%}
+                            {% if is_granted("EDIT_CHAMPIONSHIP_TOURNAMENT",championship)%}
                             <a class="btn btn-secondary"
                                href="{{ path('app_championship_edit', {'id': championship.id}) }}">{{ "btn.edit"|trans }}</a>
                             {% endif %}

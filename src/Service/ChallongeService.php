@@ -92,7 +92,8 @@ class ChallongeService
             $tournament->setChallongeId($tournamentChallonge->url);
             $this->tournamentRepository->save($tournament);
         }
-        return $this->addParticipantsToTournament($tournament, $teams);
+        $this->addParticipantsToTournament($tournament, $teams);
+        $this->startTournament($tournament);
     }
 
     private function getResults($teamsAlias = []): array

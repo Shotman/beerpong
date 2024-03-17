@@ -26,7 +26,7 @@
                     <td>
                         <div class="btn-group btn-group-sm d-flex align-items-center justify-content-center">
                             <a class="btn btn-primary" href="{{ path('app_tournament_show', {'id': tournament.id}) }}">{{ "btn.show"|trans }}</a>
-                            {% if is_granted("ROLE_ADMIN") and adminCreatedTournament(app.user,tournament) %}
+                            {% if is_granted("EDIT_CHAMPIONSHIP_TOURNAMENT",tournament) %}
                             <a class="btn btn-secondary" href="{{ path('app_tournament_edit', {'id': tournament.id}) }}">{{ "btn.edit"|trans }}</a>
                             {% if tournament.challongeId is same as(null) or tournamentIsStarted(tournament) %}
                                 <a class="btn btn-outline-success" href="{{ path('app_tournament_init', {'id': tournament.id}) }}">{{ "btn.start"|trans }}</a>
@@ -42,7 +42,7 @@
             {% endfor %}
             </tbody>
         </table>
-        {% if is_granted("ROLE_ADMIN") %}
+        {% if is_granted("CREATE_CHAMPIONSHIP_TOURNAMENT") %}
         <a class="btn btn-success" href="{{ path('app_tournament_new') }}">{{ "btn.create"|trans }}</a>
         {% endif %}
     </div>

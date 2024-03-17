@@ -4,7 +4,7 @@
 <div class="btn-group">
     <button form="{{ form.vars.id }}"
             class="btn btn-primary">{% if form.vars.data.id %}{{ "btn.edit"|trans }}{% else %}{{ "btn.create"|trans }}{% endif %}</button>
-    {% if form.vars.data.id %}
+    {% if form.vars.data.id and is_granted("DELETE_CHAMPIONSHIP_TOURNAMENT",tournament) %}
         {% include 'tournament/_delete_form.html.twig' with {"form":form} %}
     {% endif %}
     <a class="btn btn-warning" href="{{ path('app_tournament_index') }}">{{ "btn.back"|trans }}</a>

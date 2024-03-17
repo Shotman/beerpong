@@ -13,28 +13,39 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Mailer\Mailer;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Messenger\MessageBusInterface;
+use Symfony\Component\Mime\Email;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-class TestController extends AbstractBeerpongController
+class TestController extends AbstractController
 {
-    #[Route('/test/{championship}', name: 'app_test', env: 'dev', defaults: ['championship' => null])]
+    #[Route('/test', name: 'app_test', env: 'dev')]
     public function index(
         Request $request,
-        TournamentRepository $tournamentRepository,
-        PlayerRepository $playerRepository,
-        ?Championship $championship = null
+        MailerInterface $mailer,
     ): Response
     {
-        $allChampionshipPlayers = $playerRepository->getAllPlayerByChampionShip($championship);
-        $allTournaments = $tournamentRepository->findBy(['championship' => $championship]);
-        usort($allChampionshipPlayers,fn(Player $playerA,Player $playerB) => $playerB->getTotalPointsByChampionship($championship) <=> $playerA->getTotalPointsByChampionship($championship));
-        return $this->render('test/index.html.twig', [
-            'controller_name' => 'TestController',
-            'championshipEntity' => $championship,
-            'allChampionshipPlayers' => $allChampionshipPlayers,
-            'allTournaments' => $allTournaments,
-        ]);
+
+        try{
+        $email = (new Email())
+            ->from('hello@example.com')
+            ->to('you@example.com')
+            //->cc('cc@example.com')
+            //->bcc('bcc@example.com')
+            //->replyTo('fabien@example.com')
+            //->priority(Email::PRIORITY_HIGH)
+            ->subject('Time for Symfony Mailer!')
+            ->text('Sending emails is fun again!')
+            ->html('<p>See Twig integration for better HTML integration!</p>');
+
+        $mailer->send($email);
+        }catch (\Exception $e){
+            dd($e);
+        }
+        dd('test');
     }
 }

@@ -9,6 +9,7 @@ use App\Repository\ChampionshipRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TournamentRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,7 @@ use Symfony\Component\Routing\Annotation\Route;
     "fr" => "/championnats",
     "en" => "/championships",
 ])]
-class ChampionshipController extends AbstractBeerpongController
+class ChampionshipController extends AbstractController
 {
     #[Route('/', name: 'app_championship_index', methods: ['GET'])]
     public function index(ChampionshipRepository $championshipRepository): Response
@@ -34,7 +35,7 @@ class ChampionshipController extends AbstractBeerpongController
     ], name: 'app_championship_new', methods: ['GET', 'POST'])]
     public function new(Request $request, EntityManagerInterface $entityManager): Response
     {
-        if(!$this->isGranted("ROLE_ADMIN")){
+        if(!$this->isGranted("CREATE_CHAMPIONSHIP_TOURNAMENT")){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_championship_index');
         }
@@ -74,8 +75,7 @@ class ChampionshipController extends AbstractBeerpongController
     ], name: 'app_championship_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $championship->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
+        if(!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT",$championship)){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
         }
@@ -97,8 +97,7 @@ class ChampionshipController extends AbstractBeerpongController
     #[Route('/delete/{id}', name: 'app_championship_delete', methods: ['DELETE'])]
     public function delete(Request $request, Championship $championship, EntityManagerInterface $entityManager): Response
     {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $championship->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
+        if(!$this->isGranted("DELETE_CHAMPIONSHIP_TOURNAMENT",$championship)){
             $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
             return $this->redirectToRoute('app_tournament_index');
         }
