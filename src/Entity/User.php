@@ -29,14 +29,14 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
-    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Championship::class)]
+    #[ORM\OneToMany(mappedBy: "admin", targetEntity: Championship::class)]
     private Collection $championships;
 
-    #[ORM\OneToMany(mappedBy: 'admin', targetEntity: Tournament::class)]
+    #[ORM\OneToMany(mappedBy: "admin", targetEntity: Tournament::class)]
     private Collection $tournaments;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $email = null;
+    // #[ORM\Column(length: 255, nullable: true)]
+    // private ?string $email = null;
 
     public function __construct()
     {
@@ -78,7 +78,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $roles = $this->roles;
         // guarantee every user at least has ROLE_USER
-        $roles[] = 'ROLE_USER';
+        $roles[] = "ROLE_USER";
 
         return array_unique($roles);
     }
@@ -174,15 +174,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
+    // public function getEmail(): ?string
+    // {
+    //     return $this->email;
+    // }
 
-    public function setEmail(?string $email): static
-    {
-        $this->email = $email;
+    // public function setEmail(?string $email): static
+    // {
+    //     $this->email = $email;
 
-        return $this;
-    }
+    //     return $this;
+    // }
 }
