@@ -21,38 +21,37 @@ class ChampionshipRepository extends ServiceEntityRepository
         parent::__construct($registry, Championship::class);
     }
 
-//    /**
-//     * @return Championship[] Returns an array of Championship objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Championship[] Returns an array of Championship objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('c.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Championship
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
-    public function getActiveChampionships()
+    //    public function findOneBySomeField($value): ?Championship
+    //    {
+    //        return $this->createQueryBuilder('c')
+    //            ->andWhere('c.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
+    public function getActiveChampionships(): array
     {
-        return $this->createQueryBuilder('c')
-            ->andWhere('c.date_end >= :val')
-            ->setParameter('val', new \DateTime('now'))
-            ->orderBy('c.id', 'ASC')
+        return $this->createQueryBuilder("c")
+            ->andWhere("c.date_end >= :val")
+            ->setParameter("val", new \DateTime("now"))
+            ->orderBy("c.id", "ASC")
             ->getQuery()
-            ->getResult()
-        ;
+            ->getResult();
     }
 }

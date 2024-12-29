@@ -5,7 +5,9 @@ tournament:
   name: Nom du tournois
   date: Date
   championship: Championnat
-  championship_placeholder: 'Championnat (facultatif)'
+  championship_placeholder: "Championnat (facultatif)"
+  paid: "Tournois payant ?"
+  public: "Tournois public ?"
   actions: Actions
   challonge: "Tournois challonge"
   none: Aucun tournois

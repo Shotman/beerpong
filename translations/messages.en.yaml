@@ -5,9 +5,11 @@ tournament:
   name: Tournament name
   date: Date
   championship: Championship
-  championship_placeholder: 'Championship (optional)'
+  championship_placeholder: "Championship (optional)"
   challonge: "Challonge tournament"
   none: No tournament
+  paid: "Paid tournament ?"
+  public: "Public tournament ?"
 btn:
   create: Create
   start: Start
@@ -40,6 +42,3 @@ btn:
   paste: Paste
   cut: Cut
   undo: Undo
-
-
-

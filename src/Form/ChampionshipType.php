@@ -13,46 +13,47 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ChampionshipType extends AbstractType
 {
-    public function buildForm(FormBuilderInterface $builder, array $options): void
-    {
+    public function buildForm(
+        FormBuilderInterface $builder,
+        array $options
+    ): void {
         $builder
-            ->add('name', TextType::class, [
-                'label' => 'championship.name',
-                'required' => true,
-                'attr' => ['autocomplete' => 'off'],
+            ->add("name", TextType::class, [
+                "label" => "championship.name",
+                "required" => true,
+                "attr" => ["autocomplete" => "off"],
             ])
-            ->add('date_start',DateType::class,[
-                'label' => 'championship.date_start',
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy',
-                'html5' => false,
-                'attr' => [
-                    'class' => 'input date datepicker-input',
+            ->add("date_start", DateType::class, [
+                "label" => "championship.date_start",
+                "widget" => "single_text",
+                "format" => "dd/MM/yyyy",
+                "html5" => false,
+                "attr" => [
+                    "class" => "input date datepicker-input",
                     "autocomplete" => "off",
                 ],
             ])
-            ->add('date_end',DateType::class,[
-                'label' => 'championship.date_end',
-                'widget' => 'single_text',
-                'format' => 'dd/MM/yyyy',
-                'html5' => false,
-                'attr' => [
-                    'class' => 'input date datepicker-input',
+            ->add("date_end", DateType::class, [
+                "label" => "championship.date_end",
+                "widget" => "single_text",
+                "format" => "dd/MM/yyyy",
+                "html5" => false,
+                "attr" => [
+                    "class" => "input date datepicker-input",
                     "autocomplete" => "off",
                 ],
             ])
-            ->add("public",CheckboxType::class,[
-                'label' => 'Championnat public ?',
-                'required' => true,
-                'attr' => ['autocomplete' => 'off'],
-            ])
-        ;
+            ->add("public", CheckboxType::class, [
+                "label" => "Championnat public ?",
+                "required" => false,
+                "attr" => ["autocomplete" => "off"],
+            ]);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            'data_class' => Championship::class,
+            "data_class" => Championship::class,
         ]);
     }
 }

@@ -38,7 +38,7 @@
             {% endfor %}
             </tbody>
         </table>
-        {% if is_granted("ROLE_ADMIN") %}
+        {% if is_granted("CREATE_CHAMPIONSHIP_TOURNAMENT") %}
         <a class="btn btn-success" href="{{ path('app_championship_new') }}">{{ "btn.create"|trans }}</a>
         {% endif %}
     </div>
