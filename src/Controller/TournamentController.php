@@ -17,6 +17,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
@@ -110,6 +111,7 @@ class TournamentController extends AbstractController
         Tournament $tournament,
         ChallongeService $challongeService
     ): Response {
+        $matches = null;
         $flashMessage =
             "Vous n'avez pas les droits pour effectuer cette action";
         $rightAdminOrSuperAdmin =
@@ -121,7 +123,9 @@ class TournamentController extends AbstractController
             $this->addFlash("error", $flashMessage);
             return $this->redirectToRoute("app_tournament_index");
         }
-        $matches = $this->getTournamentMatches($tournament, $challongeService);
+        if($this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT", $tournament)){
+            $matches = $this->getTournamentMatches($tournament, $challongeService);
+        }
         $participants = $this->getTournamentParticipantsDetails(
             $tournament,
             $challongeService
@@ -138,6 +142,12 @@ class TournamentController extends AbstractController
         Tournament $id,
         ChallongeService $challongeService
     ): Response {
+        if(!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT", $id)){
+            $this->addFlash("error", "Vous n'avez pas les droits pour effectuer cette action");
+            return new Response("", Response::HTTP_FORBIDDEN,[
+                "HX-Refresh" => true,
+            ]);
+        }
         $participants = $this->getTournamentParticipantsDetails(
             $id,
             $challongeService
@@ -171,11 +181,17 @@ class TournamentController extends AbstractController
             $id,
             $challongeService
         );
+        $response = null;
+        if(count($matches) === 0){
+            $response = new Response("", Response::HTTP_OK,[
+                "HX-Refresh" => true,
+            ]);
+        }
         return $this->render("tournament/_partial/matches.html.twig", [
             "tournament" => $id,
             "participants" => $participants,
             "matches" => $matches,
-        ]);
+        ],$response);
     }
 
     #[
