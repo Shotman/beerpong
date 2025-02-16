@@ -14,7 +14,7 @@
                                 data-warning-type="warning"
                                 hx-confirm="L'équipe {{ participants[match.player1_id].name }} a gagné ?"
                                 hx-include="#matchId{{ match.id }},#player1Id{{ match.id }},#winner1Position{{ match.id }}"
-                                hx-swap="outerHTML" hx-target="#tournamentMatches" hx-trigger="click"
+                                hx-swap="innerHTML" hx-target="#tournamentMatches" hx-trigger="click"
                                 hx-post="{{ path("app_tournament_match_update",{"id":tournament.id}) }}"
                                 class="float-end btn btn-success rounded-0"><i class="bi bi-check-circle"></i></button>
                     </div>
@@ -24,7 +24,7 @@
                                 data-warning-type="warning"
                                 hx-confirm="L'équipe {{ participants[match.player2_id].name }} a gagné ?"
                                 hx-include="#matchId{{ match.id }},#player2Id{{ match.id }},#winner2Position{{ match.id }}"
-                                hx-swap="outerHTML" hx-target="#tournamentMatches" hx-trigger="click"
+                                hx-swap="innerHTML" hx-target="#tournamentMatches" hx-trigger="click"
                                 hx-post="{{ path("app_tournament_match_update",{"id":tournament.id}) }}"
                                 class="float-end btn btn-success rounded-0"><i class="bi bi-check-circle"></i></button>
                     </div>
