@@ -29,45 +29,48 @@ class PlayerRepository extends ServiceEntityRepository
         $this->_em->flush();
     }
 
-    public function getAllPlayerByChampionShip(?Championship $championship)
-    {
-        $q = $this->createQueryBuilder('p')
-            ->select('p')
+    public function getAllPlayerByChampionShip(
+        ?Championship $championship
+    ): array {
+        $q = $this->createQueryBuilder("p")
+            ->select("p")
             ->distinct()
-            ->join('p.tournamentResults', 'tr')
-            ->join('tr.tournament', 't');
+            ->join("p.tournamentResults", "tr")
+            ->join("tr.tournament", "t");
         if ($championship === null) {
-            $q->where('t.championship IS NULL');
+            $q->where("t.championship IS NULL");
         } else {
-            $q->join('t.championship', 'c');
-            $q->where('c.id = :championship')
-                ->setParameter('championship', $championship);
+            $q->join("t.championship", "c");
+            $q->where("c.id = :championship")->setParameter(
+                "championship",
+                $championship
+            );
         }
         return $q->getQuery()->getResult();
     }
 
-//    /**
-//     * @return Player[] Returns an array of Player objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('p.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    //    /**
+    //     * @return Player[] Returns an array of Player objects
+    //     */
+    //    public function findByExampleField($value): array
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->orderBy('p.id', 'ASC')
+    //            ->setMaxResults(10)
+    //            ->getQuery()
+    //            ->getResult()
+    //        ;
+    //    }
 
-//    public function findOneBySomeField($value): ?Player
-//    {
-//        return $this->createQueryBuilder('p')
-//            ->andWhere('p.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->getQuery()
-//            ->getOneOrNullResult()
-//        ;
-//    }
+    //    public function findOneBySomeField($value): ?Player
+    //    {
+    //        return $this->createQueryBuilder('p')
+    //            ->andWhere('p.exampleField = :val')
+    //            ->setParameter('val', $value)
+    //            ->getQuery()
+    //            ->getOneOrNullResult()
+    //        ;
+    //    }
 }

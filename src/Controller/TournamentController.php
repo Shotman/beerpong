@@ -16,35 +16,56 @@ use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
-#[Route(path: [
-    "fr" => "/tournois",
-    "en" => "/tournaments",
-])]
+#[
+    Route(
+        path: [
+            "fr" => "/tournois",
+            "en" => "/tournaments",
+        ]
+    )
+]
 class TournamentController extends AbstractController
 {
-    #[Route('/', name: 'app_tournament_index', methods: ['GET'])]
-    public function index(TournamentRepository $tournamentRepository,Security $security): Response
-    {
+    #[Route("/", name: "app_tournament_index", methods: ["GET"])]
+    public function index(
+        TournamentRepository $tournamentRepository,
+        Security $security
+    ): Response {
         $seeAll = $this->isGranted("LIST_ALL_CHAMPIONSHIP_TOURNAMENT");
         $user = $security->getUser();
-        return $this->render('tournament/index.html.twig', [
-            'tournaments' => $tournamentRepository->findAllFiltered($user,$seeAll),
+        return $this->render("tournament/index.html.twig", [
+            "tournaments" => $tournamentRepository->findAllFiltered(
+                $user,
+                $seeAll
+            ),
         ]);
     }
 
-    #[Route(path: [
-        "fr" => "/nouveau",
-        "en" => "/new",
-    ], name: 'app_tournament_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager, ChampionshipRepository $championshipRepository): Response
-    {
-        if(!$this->isGranted("CREATE_CHAMPIONSHIP_TOURNAMENT")){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_tournament_index');
+    #[
+        Route(
+            path: [
+                "fr" => "/nouveau",
+                "en" => "/new",
+            ],
+            name: "app_tournament_new",
+            methods: ["GET", "POST"]
+        )
+    ]
+    public function new(
+        Request $request,
+        EntityManagerInterface $entityManager,
+        ChampionshipRepository $championshipRepository
+    ): Response {
+        if (!$this->isGranted("CREATE_CHAMPIONSHIP_TOURNAMENT")) {
+            $this->addFlash(
+                "error",
+                "Vous n'avez pas les droits pour effectuer cette action"
+            );
+            return $this->redirectToRoute("app_tournament_index");
         }
         $tournament = new Tournament();
         $form = $this->createForm(TournamentType::class, $tournament);
@@ -52,81 +73,132 @@ class TournamentController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $tournament->setExtraData([
-                'game' => $request->get('tournament')['gameName']
+                "game" => $request->get("tournament")["gameName"],
             ]);
-            if($request->get("tournament")["championship"]){
-                $championship = $championshipRepository->find((int)$request->get("tournament")["championship"]);
+            if ($request->get("tournament")["championship"]) {
+                $championship = $championshipRepository->find(
+                    (int) $request->get("tournament")["championship"]
+                );
                 $tournament->setPublic($championship->isPublic());
             }
             $tournament->setAdmin($this->getUser());
             $entityManager->persist($tournament);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute(
+                "app_tournament_index",
+                [],
+                Response::HTTP_SEE_OTHER
+            );
         }
 
-        return $this->render('tournament/new.html.twig', [
-            'tournament' => $tournament,
-            'form' => $form->createView(),
+        return $this->render("tournament/new.html.twig", [
+            "tournament" => $tournament,
+            "form" => $form->createView(),
         ]);
     }
 
-    #[Route('/{id}', name: 'app_tournament_show', requirements: ['id' => '\d+'], methods: ['GET'])]
-    public function show(Tournament $tournament, ChallongeService $challongeService): Response
-    {
-        $flashMessage = "Vous n'avez pas les droits pour effectuer cette action";
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$tournament->isPublic() && $rightAdminOrSuperAdmin){
-            $this->addFlash('error', $flashMessage);
-            return $this->redirectToRoute('app_tournament_index');
+    #[
+        Route(
+            "/{id}",
+            name: "app_tournament_show",
+            requirements: ["id" => "\d+"],
+            methods: ["GET"]
+        )
+    ]
+    public function show(
+        Tournament $tournament,
+        ChallongeService $challongeService
+    ): Response {
+        $flashMessage =
+            "Vous n'avez pas les droits pour effectuer cette action";
+        $rightAdminOrSuperAdmin =
+            !is_null($this->getUser()) &&
+            $this->getUser()->getUserIdentifier() !==
+                $tournament->getAdmin()->getUserIdentifier() &&
+            !$this->isGranted("ROLE_SUPER_ADMIN");
+        if (!$tournament->isPublic() && $rightAdminOrSuperAdmin) {
+            $this->addFlash("error", $flashMessage);
+            return $this->redirectToRoute("app_tournament_index");
         }
         $matches = $this->getTournamentMatches($tournament, $challongeService);
-        $participants = $this->getTournamentParticipantsDetails($tournament, $challongeService);
-        return $this->render('tournament/show.html.twig', [
-            'tournament' => $tournament,
-            'matches' => $matches,
-            'participants' => $participants,
+        $participants = $this->getTournamentParticipantsDetails(
+            $tournament,
+            $challongeService
+        );
+        return $this->render("tournament/show.html.twig", [
+            "tournament" => $tournament,
+            "matches" => $matches,
+            "participants" => $participants,
         ]);
     }
 
-    #[Route('/{id}/matches', name: 'app_tournament_matches', methods: ['GET'])]
-    public function matches(Tournament $id, ChallongeService $challongeService): Response
-    {
-        $participants = $this->getTournamentParticipantsDetails($id, $challongeService);
+    #[Route("/{id}/matches", name: "app_tournament_matches", methods: ["GET"])]
+    public function matches(
+        Tournament $id,
+        ChallongeService $challongeService
+    ): Response {
+        $participants = $this->getTournamentParticipantsDetails(
+            $id,
+            $challongeService
+        );
         $matches = $this->getTournamentMatches($id, $challongeService);
-        return $this->render('tournament/_partial/matches.html.twig', [
-            'tournament' => $id,
-            'participants' => $participants,
-            'matches' => $matches,
+        return $this->render("tournament/_partial/matches.html.twig", [
+            "tournament" => $id,
+            "participants" => $participants,
+            "matches" => $matches,
         ]);
     }
 
-    #[Route(path: '/{tournament}/winner', name: 'app_tournament_match_update', methods: ['POST'])]
-    public function updateMatch(Request $request, Tournament $tournament, ChallongeService $challongeService): Response
-    {
-        if(!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT")){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_tournament_index');
-        }
-        $challongeService->setMatchWinner($tournament, $request);
-        $matches = $this->getTournamentMatches($tournament, $challongeService);
-        $participants = $this->getTournamentParticipantsDetails($tournament, $challongeService);
-        return $this->renderBlock('tournament/show.html.twig',"body", [
-            'tournament' => $tournament,
-            'participants' => $participants,
-            'matches' => $matches,
+    #[
+        Route(
+            path: "/{id}/winner",
+            name: "app_tournament_match_update",
+            methods: ["POST"],
+        )
+    ]
+    public function updateMatch(
+        Tournament $id,
+        Request $request,
+        ChallongeService $challongeService
+    ): Response {
+//        if (!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT")) {
+//            return new JsonResponse(["message" => "Vous n'avez pas les droits pour edit cette action"], Response::HTTP_FORBIDDEN);
+//        }
+        $challongeService->setMatchWinner($id, $request);
+        $matches = $this->getTournamentMatches($id, $challongeService);
+        $participants = $this->getTournamentParticipantsDetails(
+            $id,
+            $challongeService
+        );
+        return $this->render("tournament/_partial/matches.html.twig", [
+            "tournament" => $id,
+            "participants" => $participants,
+            "matches" => $matches,
         ]);
     }
 
-    #[Route(path: [
-        "fr" => "/{id}/modifier",
-        "en" => "/{id}/edit",
-    ], name: 'app_tournament_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Tournament $tournament, EntityManagerInterface $entityManager): Response
-    {
-        if(!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT",$tournament)){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_tournament_index');
+    #[
+        Route(
+            path: [
+                "fr" => "/{id}/modifier",
+                "en" => "/{id}/edit",
+            ],
+            name: "app_tournament_edit",
+            methods: ["GET", "POST"]
+        )
+    ]
+    public function edit(
+        Request $request,
+        Tournament $tournament,
+        EntityManagerInterface $entityManager
+    ): Response {
+        if (!$this->isGranted("EDIT_CHAMPIONSHIP_TOURNAMENT", $tournament)) {
+            $this->addFlash(
+                "error",
+                "Vous n'avez pas les droits pour effectuer cette action"
+            );
+            return $this->redirectToRoute("app_tournament_index");
         }
         $form = $this->createForm(TournamentType::class, $tournament);
         $form->handleRequest($request);
@@ -134,42 +206,71 @@ class TournamentController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_tournament_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute(
+                "app_tournament_index",
+                [],
+                Response::HTTP_SEE_OTHER
+            );
         }
 
-        return $this->render('tournament/edit.html.twig', [
-            'tournament' => $tournament,
-            'form' => $form,
+        return $this->render("tournament/edit.html.twig", [
+            "tournament" => $tournament,
+            "form" => $form,
         ]);
     }
 
-    #[Route([
-        "fr" => "/{id}/supprimer",
-        "en" => "/{id}/delete",
-    ], name: 'app_tournament_delete', requirements: ['id' => '\d+'] ,methods: ['DELETE'])]
-    public function delete(Request $request, Tournament $id, EntityManagerInterface $entityManager, ChallongeService $challongeService): Response
-    {
-        if(!$this->isGranted("DELETE_CHAMPIONSHIP_TOURNAMENT",$id)){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return new Response('',Response::HTTP_FORBIDDEN,[
+    #[
+        Route(
+            [
+                "fr" => "/{id}/supprimer",
+                "en" => "/{id}/delete",
+            ],
+            name: "app_tournament_delete",
+            requirements: ["id" => "\d+"],
+            methods: ["DELETE"]
+        )
+    ]
+    public function delete(
+        Request $request,
+        Tournament $id,
+        EntityManagerInterface $entityManager,
+        ChallongeService $challongeService
+    ): Response {
+        if (!$this->isGranted("DELETE_CHAMPIONSHIP_TOURNAMENT", $id)) {
+            $this->addFlash(
+                "error",
+                "Vous n'avez pas les droits pour effectuer cette action"
+            );
+            return new Response("", Response::HTTP_FORBIDDEN, [
                 "HX-Refresh" => true,
             ]);
         }
-        if ($this->isCsrfTokenValid('delete'.$id->getId(), $request->headers->get('x-csrftoken'))) {
+        if (
+            $this->isCsrfTokenValid(
+                "delete" . $id->getId(),
+                $request->headers->get("x-csrftoken")
+            )
+        ) {
             $challongeService->deleteTournament($id);
             $entityManager->remove($id);
             $entityManager->flush();
-            return new JsonResponse('', Response::HTTP_OK,[
-                "HX-Redirect" => $this->generateUrl('app_tournament_index')
+            return new JsonResponse("", Response::HTTP_OK, [
+                "HX-Redirect" => $this->generateUrl("app_tournament_index"),
             ]);
         }
-        return new JsonResponse('', Response::HTTP_INTERNAL_SERVER_ERROR);
+        return new JsonResponse("", Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 
-    #[Route(path: [
-        "fr" => "/{id}/démarrer",
-        "en" => "/{id}/init",
-    ], name: 'app_tournament_init', methods: ['GET', 'POST'])]
+    #[
+        Route(
+            path: [
+                "fr" => "/{id}/démarrer",
+                "en" => "/{id}/init",
+            ],
+            name: "app_tournament_init",
+            methods: ["GET", "POST"]
+        )
+    ]
     public function init(
         Request $request,
         Tournament $tournament,
@@ -179,14 +280,24 @@ class TournamentController extends AbstractController
         CacheInterface $randomCache,
         EntityManagerInterface $em,
         SluggerInterface $slugger
-    ): Response
-    {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_tournament_index');
+    ): Response {
+        $rightAdminOrSuperAdmin =
+            !is_null($this->getUser()) &&
+            $this->getUser()->getUserIdentifier() !==
+                $tournament->getAdmin()->getUserIdentifier() &&
+            !$this->isGranted("ROLE_SUPER_ADMIN");
+        if (!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin) {
+            $this->addFlash(
+                "error",
+                "Vous n'avez pas les droits pour effectuer cette action"
+            );
+            return $this->redirectToRoute("app_tournament_index");
         }
-        $data = $randomCache->getItem('tournament_'.$tournament->getId()."_teams")->get() ?? null;
+
+        $data =
+            $randomCache
+                ->getItem("tournament_" . $tournament->getId() . "_teams")
+                ->get() ?? null;
         $form = $this->createForm(TeamTournamentType::class, $data, [
             "em" => $em,
             "tournament" => $tournament,
@@ -194,98 +305,168 @@ class TournamentController extends AbstractController
 
         $form->handleRequest($request);
 
-        if($form->isSubmitted()){
-            if(!array_key_exists("createTournamentResponse",$tournament->getExtraData())) {
+        if ($form->isSubmitted()) {
+            if (
+                !array_key_exists(
+                    "createTournamentResponse",
+                    $tournament->getExtraData()
+                )
+            ) {
                 $teamNamesAssoc = [];
                 $teams = [];
-                foreach ($request->get('team_tournament')['teams'] as $team) {
+                foreach ($request->get("team_tournament")["teams"] as $team) {
                     $player1Slug = $slugger->slug($team["player1"]);
                     $player2Slug = $slugger->slug($team["player2"]);
-                    $player1 = $playerRepository->findOneBy(['identifier' => $player1Slug]);
-                    $player2 = $playerRepository->findOneBy(['identifier' => $player2Slug]);
+                    $player1 = $playerRepository->findOneBy([
+                        "identifier" => $player1Slug,
+                    ]);
+                    $player2 = $playerRepository->findOneBy([
+                        "identifier" => $player2Slug,
+                    ]);
                     $tmpTeam = new Team($player1, $player2, $playerRepository);
                     if ($team["teamName"]) {
                         $tmpTeam->setTeamName($team["teamName"]);
                     }
-                    $teamNamesAssoc[$tmpTeam->getTeamName()] = $tmpTeam->getPlayerTeamName();
+                    $teamNamesAssoc[
+                        $tmpTeam->getTeamName()
+                    ] = $tmpTeam->getPlayerTeamName();
                     $teams[] = $tmpTeam;
                 }
-                $teamsCache = $randomCache->getItem('tournament_' . $tournament->getId() . "_teamsNames");
+                $teamsCache = $randomCache->getItem(
+                    "tournament_" . $tournament->getId() . "_teamsNames"
+                );
                 $teamsCache->set($teamNamesAssoc);
                 $randomCache->save($teamsCache);
-                $createTournamentResponse = $challongeService->createTournament($tournament, $teams);
+                $createTournamentResponse = $challongeService->createTournament(
+                    $tournament,
+                    $teams
+                );
                 if ($createTournamentResponse instanceof \Exception) {
-                    $this->addFlash('error', $createTournamentResponse->getMessage());
-                    return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+                    $this->addFlash(
+                        "error",
+                        $createTournamentResponse->getMessage()
+                    );
+                    return $this->redirectToRoute("app_tournament_show", [
+                        "id" => $tournament->getId(),
+                    ]);
                 }
-                $tournament->setExtraData(["createTournamentResponse" => $createTournamentResponse]);
+                $tournament->setExtraData([
+                    "createTournamentResponse" => $createTournamentResponse,
+                ]);
                 $tournamentRepository->save($tournament);
             }
-            $randomizeTournamentResponse = $challongeService->randomizeTournament($tournament);
-            if($randomizeTournamentResponse instanceof \Exception){
-                $this->addFlash('error', $randomizeTournamentResponse->getMessage());
-                return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+            // $randomizeTournamentResponse = $challongeService->randomizeTournament($tournament);
+            // if($randomizeTournamentResponse instanceof \Exception){
+            //     $this->addFlash('error', $randomizeTournamentResponse->getMessage());
+            //     return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+            // }
+            $startTournamentResponse = $challongeService->startTournament(
+                $tournament
+            );
+            if ($startTournamentResponse instanceof \Exception) {
+                $this->addFlash(
+                    "error",
+                    $startTournamentResponse->getMessage()
+                );
+                return $this->redirectToRoute("app_tournament_show", [
+                    "id" => $tournament->getId(),
+                ]);
             }
-            $startTournamentResponse = $challongeService->startTournament($tournament);
-            if($startTournamentResponse instanceof \Exception){
-                $this->addFlash('error', $startTournamentResponse->getMessage());
-                return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
-            }
-            return $this->redirectToRoute('app_tournament_show', ['id' => $tournament->getId()]);
+            return $this->redirectToRoute("app_tournament_show", [
+                "id" => $tournament->getId(),
+            ]);
         }
 
-        return $this->render('tournament/init.html.twig', [
-            'tournament' => $tournament,
-            'form' => $form->createView(),
+        return $this->render("tournament/init.html.twig", [
+            "tournament" => $tournament,
+            "form" => $form->createView(),
         ]);
     }
 
-    #[Route('/{tournament}/finish', name: 'app_tournament_finish')]
-    public function finish(Request $request, Tournament $tournament, ChallongeService $challongeService, CacheInterface $randomCache): Response
-    {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_tournament_index');
+    #[Route("/{tournament}/finish", name: "app_tournament_finish")]
+    public function finish(
+        Request $request,
+        Tournament $tournament,
+        ChallongeService $challongeService,
+        CacheInterface $randomCache
+    ): Response {
+        $rightAdminOrSuperAdmin =
+            !is_null($this->getUser()) &&
+            $this->getUser()->getUserIdentifier() !==
+                $tournament->getAdmin()->getUserIdentifier() &&
+            !$this->isGranted("ROLE_SUPER_ADMIN");
+        if (!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin) {
+            $this->addFlash(
+                "error",
+                "Vous n'avez pas les droits pour effectuer cette action"
+            );
+            return $this->redirectToRoute("app_tournament_index");
         }
-        $cacheItem = $randomCache->getItem('tournament_'.$tournament->getId()."_teamsNames");
+        $cacheItem = $randomCache->getItem(
+            "tournament_" . $tournament->getId() . "_teamsNames"
+        );
         $challongeService->finalizeTournament($tournament, $cacheItem->get());
-        return new JsonResponse('', Response::HTTP_OK,[
-            "HX-Redirect" => $this->generateUrl('app_tournament_show', ['id' => $tournament->getId()])
+        return new JsonResponse("", Response::HTTP_OK, [
+            "HX-Redirect" => $this->generateUrl("app_tournament_show", [
+                "id" => $tournament->getId(),
+            ]),
         ]);
     }
 
-    #[Route(path: [
-        "fr" => "/{id}/sauvegarder",
-        "en" => "/{id}/save",
-    ], name: 'app_tournament_save', methods: ['POST'])]
-    public function save(Request $request, Tournament $tournament ,CacheInterface $randomCache, EntityManagerInterface $em): Response
-    {
-        $rightAdminOrSuperAdmin = !is_null($this->getUser()) && $this->getUser()->getUserIdentifier() !== $tournament->getAdmin()->getUserIdentifier() && !$this->isGranted("ROLE_SUPER_ADMIN");
-        if(!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin){
-            $this->addFlash('error', "Vous n'avez pas les droits pour effectuer cette action");
-            return $this->redirectToRoute('app_tournament_index');
+    #[
+        Route(
+            path: [
+                "fr" => "/{id}/sauvegarder",
+                "en" => "/{id}/save",
+            ],
+            name: "app_tournament_save",
+            methods: ["POST"]
+        )
+    ]
+    public function save(
+        Request $request,
+        Tournament $tournament,
+        CacheInterface $randomCache,
+        EntityManagerInterface $em
+    ): Response {
+        $rightAdminOrSuperAdmin =
+            !is_null($this->getUser()) &&
+            $this->getUser()->getUserIdentifier() !==
+                $tournament->getAdmin()->getUserIdentifier() &&
+            !$this->isGranted("ROLE_SUPER_ADMIN");
+        if (!$this->isGranted("ROLE_ADMIN") && $rightAdminOrSuperAdmin) {
+            $this->addFlash(
+                "error",
+                "Vous n'avez pas les droits pour effectuer cette action"
+            );
+            return $this->redirectToRoute("app_tournament_index");
         }
         $form = $this->createForm(TeamTournamentType::class, null, [
             "em" => $em,
             "tournament" => $tournament,
         ]);
         $form->handleRequest($request);
-        $cacheItem = $randomCache->getItem('tournament_'.$tournament->getId()."_teams");
+        $cacheItem = $randomCache->getItem(
+            "tournament_" . $tournament->getId() . "_teams"
+        );
         $cacheItem->set($form->getData());
         $randomCache->save($cacheItem);
-        return $this->renderBlock('global/partials.html.twig', "successAlert", [
-            'message' => "Les équipes ont bien été sauvegardées",
+        return $this->renderBlock("global/partials.html.twig", "successAlert", [
+            "message" => "Les équipes ont bien été sauvegardées",
         ]);
     }
 
-    private function getTournamentMatches(Tournament $tournament, ChallongeService $challongeService): array
-    {
+    private function getTournamentMatches(
+        Tournament $tournament,
+        ChallongeService $challongeService
+    ): array {
         return $challongeService->getTournamentMatches($tournament);
     }
 
-    private function getTournamentParticipantsDetails(Tournament $tournament, ChallongeService $challongeService): array
-    {
-        return $challongeService->getParticipantsDetails($tournament,true);
+    private function getTournamentParticipantsDetails(
+        Tournament $tournament,
+        ChallongeService $challongeService
+    ): array {
+        return $challongeService->getParticipantsDetails($tournament, true);
     }
 }

@@ -25,10 +25,10 @@ class Championship
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTimeInterface $date_end = null;
 
-    #[ORM\OneToMany(mappedBy: 'championship', targetEntity: Tournament::class)]
+    #[ORM\OneToMany(mappedBy: "championship", targetEntity: Tournament::class)]
     private Collection $tournaments;
 
-    #[ORM\ManyToOne(inversedBy: 'championships')]
+    #[ORM\ManyToOne(inversedBy: "championships")]
     private ?User $admin = null;
 
     #[ORM\Column]
@@ -115,7 +115,7 @@ class Championship
         return $this->getName();
     }
 
-    public function getPercentDone()
+    public function getPercentDone(): float
     {
         $startDate = $this->getDateStart();
         $endDate = $this->getDateEnd();

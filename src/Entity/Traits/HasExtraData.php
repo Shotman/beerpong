@@ -14,10 +14,15 @@ trait HasExtraData
     {
         return $this->extraData;
     }
-
+    /**
+     * @param array<int,mixed> $extraData
+     */
     public function setExtraData(array $extraData): static
     {
-        $this->extraData = array_replace_recursive($this->extraData ?? [], $extraData);
+        $this->extraData = array_replace_recursive(
+            $this->extraData ?? [],
+            $extraData
+        );
 
         return $this;
     }

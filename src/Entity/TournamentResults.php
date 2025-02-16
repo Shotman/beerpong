@@ -41,7 +41,7 @@ class TournamentResults
         return $this->player;
     }
 
-    public function setPlayer(Player $player): static
+    public function setPlayer(?Player $player): static
     {
         $this->player = $player;
 

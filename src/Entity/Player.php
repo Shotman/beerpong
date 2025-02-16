@@ -4,13 +4,9 @@ namespace App\Entity;
 
 use App\Entity\Listener\PlayerListener;
 use App\Repository\PlayerRepository;
-use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\EventArgs;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Validator\Context\ExecutionContextInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[ORM\Entity(repositoryClass: PlayerRepository::class)]
 #[ORM\EntityListeners([PlayerListener::class])]
@@ -23,22 +19,28 @@ class Player
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\Regex(
-        pattern: '/\&/i',
-        match: false,
-        message: 'The name cannot contain the & character: {{ value }}',
-    )]
+    #[
+        Assert\Regex(
+            pattern: "/\&/i",
+            match: false,
+            message: "The name cannot contain the & character: {{ value }}"
+        )
+    ]
     private ?string $name = null;
 
-    #[ORM\Column(length: 255,unique: true)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $identifier = null;
 
-    #[ORM\OneToMany(mappedBy: 'player', targetEntity: TournamentResults::class,cascade: ['persist'])]
+    #[
+        ORM\OneToMany(
+            mappedBy: "player",
+            targetEntity: TournamentResults::class,
+            cascade: ["persist"]
+        )
+    ]
     private Collection $tournamentResults;
 
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 
     public function getId(): ?int
     {
@@ -70,11 +72,15 @@ class Player
         return $this->tournamentResults;
     }
 
-    public function getTotalPointsByChampionship(?Championship $championship = null)
-    {
+    public function getTotalPointsByChampionship(
+        ?Championship $championship = null
+    ): int {
         $totalPoints = 0;
         foreach ($this->tournamentResults as $tournamentResult) {
-            if($tournamentResult->getTournament()?->getChampionship() !== $championship){
+            if (
+                $tournamentResult->getTournament()?->getChampionship() !==
+                $championship
+            ) {
                 continue;
             }
             $totalPoints += $tournamentResult->getPoints();
@@ -82,7 +88,7 @@ class Player
         return $totalPoints;
     }
 
-    public function getTotalPoints()
+    public function getTotalPoints(): int
     {
         $totalPoints = 0;
         foreach ($this->tournamentResults as $tournamentResult) {
@@ -91,8 +97,9 @@ class Player
         return $totalPoints;
     }
 
-    public function addTournamentResult(TournamentResults $tournamentResult): static
-    {
+    public function addTournamentResult(
+        TournamentResults $tournamentResult
+    ): static {
         if (!$this->tournamentResults->contains($tournamentResult)) {
             $this->tournamentResults->add($tournamentResult);
             $tournamentResult->setPlayer($this);
@@ -101,8 +108,9 @@ class Player
         return $this;
     }
 
-    public function removeTournamentResult(TournamentResults $tournamentResult): static
-    {
+    public function removeTournamentResult(
+        TournamentResults $tournamentResult
+    ): static {
         if ($this->tournamentResults->removeElement($tournamentResult)) {
             // set the owning side to null (unless already changed)
             if ($tournamentResult->getPlayer() === $this) {
@@ -121,6 +129,6 @@ class Player
 
     public function __toString(): string
     {
-       return $this->getIdentifier();
+        return $this->getIdentifier();
     }
 }
