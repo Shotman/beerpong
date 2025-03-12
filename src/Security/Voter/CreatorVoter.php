@@ -56,8 +56,6 @@ class CreatorVoter extends Voter
 
     private function isRightUserForSubject(UserInterface $user,Tournament|Championship $subject): bool
     {
-        dump(in_array("ROLE_SUPER_ADMIN",$user->getRoles()));
-        dump(($user->getUserIdentifier() === $subject->getAdmin()->getUserIdentifier() && in_array("ROLE_ADMIN",$user->getRoles())));
         return in_array("ROLE_SUPER_ADMIN",$user->getRoles()) || ($user->getUserIdentifier() === $subject->getAdmin()->getUserIdentifier() && in_array("ROLE_ADMIN",$user->getRoles()));
     }
 }

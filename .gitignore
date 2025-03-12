@@ -32,3 +32,6 @@ yarn-error.log
 ###< symfony/asset-mapper ###
 /.idea
 /.idea/*
+/.run/
+/.run/*
+.phpactor.json

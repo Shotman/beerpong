@@ -91,7 +91,6 @@ class ChallongeService
         ?Tournament $tournament,
         array $teams
     ): void {
-        dump($teams);
         shuffle($teams);
         if (is_null($tournament)) {
             $tournament = new Tournament();
