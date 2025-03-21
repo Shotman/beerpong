@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello MercureTestController!{% endblock %}
+
+{% block body %}
+<style>
+    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
+</style>
+
+<div class="example-wrapper">
+    <h1>Hello {{ controller_name }}! ✅</h1>
+
+    This friendly message is coming from:
+    <ul>
+        <li>Your controller at <code>/home/sylvian/Documents/Dev/PHP/beerpong/src/Controller/MercureTestController.php</code></li>
+        <li>Your template at <code>/home/sylvian/Documents/Dev/PHP/beerpong/templates/mercure_test/index.html.twig</code></li>
+    </ul>
+</div>
+    <script>
+        console.log("{{  absolute_url(asset('images/favicon.svg'))|replace({'127.0.0.1': "192.168.1.194"}) }}");
+        function showNotification() {
+            Notification.requestPermission().then((result) => {
+                if (result === "granted") {
+                    navigator.serviceWorker.ready.then((registration) => {
+                        registration.showNotification("Vibration Sample", {
+                            body: "Buzz! Buzz!",
+                            icon: "../images/touch/chrome-touch-icon-192x192.png",
+                            vibrate: [200, 100, 200, 100, 200, 100, 200],
+                            tag: "vibration-sample",
+                        });
+                    });
+                }
+            });
+        }
+
+        const eventSource = new EventSource("{{ mercure('toto')|escape('js') }}", {
+            withCredentials: false
+        });
+        console.log(eventSource);
+            eventSource.onerror = error => {
+                console.log(error)
+            }
+            eventSource.onmessage = event => {
+            // Will be called every time an update is published by the server
+            let data = JSON.parse(event.data).data;
+            console.log(data)
+            window.Push.create(data, {
+                body: 'This is a web notification!',
+                timeout: 5000,
+                vibrate: [100,200,100,200],
+                icon: "PHN2ZyB3aWR0aD0nMjAwJyBoZWlnaHQ9JzIwMCcgeG1sbnM9J2h0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnJz48cmVjdCB3aWR0aD0nMTAwJyBoZWlnaHQ9JzEwMCcgeD0nNTAnIHk9JzUwJyBmaWxsPSdyZWQnIC8+PC9zdmc+",
+                onClick: function () {
+                    window.focus();
+                    this.close();
+                },
+            });
+        }
+    </script>
+{% endblock %}

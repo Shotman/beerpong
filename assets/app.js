@@ -1,5 +1,8 @@
 import './bootstrap.js';
 
+navigator.serviceWorker.register(window.location.origin + "/sw.js");
+
+
 //3rd party libraries
 import 'bootstrap'
 import Push from 'push.js'

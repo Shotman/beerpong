@@ -23,11 +23,11 @@ return [
         'version' => '3.2.2',
     ],
     'tom-select/dist/css/tom-select.bootstrap5.css' => [
-        'version' => '2.4.1',
+        'version' => '2.4.3',
         'type' => 'css',
     ],
     'tom-select' => [
-        'version' => '2.4.1',
+        'version' => '2.4.3',
     ],
     'vanillajs-datepicker' => [
         'version' => '1.3.4',
@@ -50,7 +50,7 @@ return [
         'version' => '1.3.4',
     ],
     'htmx.org' => [
-        'version' => '1.9.12',
+        'version' => '2.0.4',
     ],
     'bootstrap-icons/font/bootstrap-icons.min.css' => [
         'version' => '1.11.3',
@@ -76,7 +76,10 @@ return [
         'version' => '1.1.2',
     ],
     'tom-select/dist/css/tom-select.default.min.css' => [
-        'version' => '2.4.1',
+        'version' => '2.4.3',
         'type' => 'css',
+    ],
+    'htmx-ext-sse' => [
+        'version' => '2.2.3',
     ],
 ];
