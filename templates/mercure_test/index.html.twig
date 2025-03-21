@@ -34,8 +34,8 @@
             });
         }
 
-        const eventSource = new EventSource("{{ mercure('toto')|escape('js') }}", {
-            withCredentials: false
+        const eventSource = new EventSource("{{ mercure('toto',{ subscribe: 'toto' })|escape('js') }}", {
+            withCredentials: true
         });
         console.log(eventSource);
             eventSource.onerror = error => {
