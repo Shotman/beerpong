@@ -4,7 +4,7 @@
         {% if matches|length > 0 %}
         {% for match in matches %}
             <div class="shadow px-0 border-1 border-black border text-center col-5 d-flex align-items-center container-fluid mb-2">
-                <div class="bg-danger col-md-1 text-white d-flex h-100 justify-content-center align-items-center h-100 border-end border-black align-center">
+                <div style="cursor: pointer" hx-post="{{ path('app_mercure_test_tournament') }}" hx-vals='{"tournament":"{{ tournament.id }}","team1":"{{ participants[match.player1_id].name }}","team2":"{{ participants[match.player2_id].name }}"}' hx-swap="none" hx-trigger="click" class="bg-danger col-md-1 text-white d-flex h-100 justify-content-center align-items-center h-100 border-end border-black align-center">
                     <p class="mb-0">VS</p>
                 </div>
                 <div class="col-md-11 h-100">

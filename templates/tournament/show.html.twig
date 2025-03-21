@@ -35,3 +35,30 @@
         </div>
     </div>
 {% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        {% set mercure_topic = tournament.id|trans %}
+        const eventSource = new EventSource("{{ mercure( mercure_topic ,{ subscribe: mercure_topic }) }}", {
+            withCredentials: true
+        });
+        eventSource.onerror = error => {
+            console.log(error)
+        }
+        eventSource.onmessage = event => {
+            // Will be called every time an update is published by the server
+            let eventData = JSON.parse(event.data);
+            let data = eventData.data;
+            Push.create(data, {
+                body: eventData.content,
+                timeout: 5000,
+                vibrate: [100,200,100,200],
+                onClick: function () {
+                    window.focus();
+                    this.close();
+                },
+            })
+        }
+    </script>
+{% endblock %}
