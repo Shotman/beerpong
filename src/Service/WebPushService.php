@@ -52,30 +52,34 @@ use Symfony\Contracts\Cache\CacheInterface;
         $this->webPush = $webPush;
     }
 
-    public function registerSubscription($subscribtion): void
+    public function registerSubscription($subscribtion, string $sessionId): void
     {
         $subs = $this->webpushCache->getItem('subscriptions');
         $subsArray = $subs->get();
         $subscriptionObject = Subscription::create(json_decode($subscribtion["content"],true));
-        $find = null;
-        if(!empty($subsArray)){
-            $subsArrayContext = $subsArray[$subscribtion["context"]];
-            $find = array_find($subsArrayContext, function ($value, $key) use ($subscriptionObject) {
-                /**
-                 * @var Subscription $value
-                 */
-                return $value == $subscriptionObject;
-
-            });
+        if(empty($subsArray) || !array_key_exists($sessionId, $subsArray)) {
+            $subsArray[$subscribtion["context"]][$sessionId] = $subscriptionObject;
         }
-        if(is_null($find)) {
-            $subsArray[$subscribtion["context"]][] = $subscriptionObject;
-            $subs->set($subsArray);
-        }
+        $subs->set($subsArray);
         $this->webpushCache->save($subs);
     }
 
-    private function getSubscriptions(string $context): array
+    public function unregisterSubscription($subscribtion, string $sessionId): void
+    {
+        $subs = $this->webpushCache->getItem('subscriptions');
+        $subsArray = $subs->get();
+        $context = $subscribtion["context"];
+        if (!empty($subsArray) && array_key_exists($context, $subsArray) && array_key_exists($sessionId, $subsArray[$context])) {
+            unset($subsArray[$context][$sessionId]);
+            if (empty($subsArray[$context])) {
+                unset($subsArray[$context]);
+            }
+        }
+        $subs->set($subsArray);
+        $this->webpushCache->save($subs);
+    }
+
+    public function getSubscriptions(string $context): array
     {
         return $this->webpushCache->getItem('subscriptions')->get()[$context] ?? [];
     }
@@ -84,8 +88,8 @@ use Symfony\Contracts\Cache\CacheInterface;
     {
         $iconUrl = join("",[$this->requestStack->getMainRequest()->getSchemeAndHttpHost(),$this->packageInterface->getUrl('images/notification_icon.png')]);
         $subscriptions = $this->getSubscriptions($context);
-        dump($subscriptions);
         $webPush = $this->webPush;
+        dump($subscriptions);
         foreach ($subscriptions as $subscription) {
             $webPush->queueNotification($subscription,json_encode(
                 [
@@ -104,5 +108,13 @@ use Symfony\Contracts\Cache\CacheInterface;
                 echo "<br/>[x] Message failed to sent for subscription {$endpoint}: {$report->getReason()}";
             }
         }
+
+    }
+
+    public function hasSubscribed(string $session, string $tournamentId): bool
+    {
+        $subs = $this->webpushCache->getItem('subscriptions');
+        $subsArray = $subs->get();
+        return !empty($subsArray) && array_key_exists($tournamentId, $subsArray) && array_key_exists($session, $subsArray[$tournamentId]);
     }
 }

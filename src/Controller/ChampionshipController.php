@@ -21,7 +21,7 @@ use Symfony\Component\Routing\Annotation\Route;
         "en" => "/championships",
     ])
 ]
-class ChampionshipController extends AbstractController
+class ChampionshipController extends BaseController
 {
     #[Route("/", name: "app_championship_index", methods: ["GET"])]
     public function index(

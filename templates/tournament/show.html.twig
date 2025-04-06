@@ -4,9 +4,16 @@
 
 {% block body %}
     <div id="showViewContainer" class="container-fluid align-self-start">
-        <h1>Tournois - <a target="_blank"
+        <div class="d-flex align-items-center">
+        <h1 class="d-inline-block">Tournois - <a target="_blank"
                           href="https://challonge.com/fr/{{ tournament.challongeId }}">{{ tournament.name }}</a>
             - {{ tournament.date ? tournament.date|date('d/m/y') : '' }} </h1>
+        <div class="d-inline-block ms-3 form-check form-switch fs-4" >
+            <input class="form-check-input" onchange="toggleRegisterNotification('{{ tournament.challongeId }}')"
+                    {% if userHasSubscribed(tournament.challongeId) %} checked="checked" {% endif%} type="checkbox" role="switch" id="switchCheckDefault">
+            <label class="form-check-label" for="switchCheckDefault">Reçevoir les alertes de matchs du tournois</label>
+        </div>
+        </div>
         {% if tournament.extraData.state is not defined and matches|length > 0 %}
             <div id="tournamentMatches" class="fade-in fade-out">
                 {% include 'tournament/_partial/matches.html.twig' with {"matches":matches|default([]),"participants":participants,"tournament":tournament} %}
@@ -34,31 +41,4 @@
             <a class="btn btn-warning" href="{{ path('app_tournament_index') }}">{{ "btn.back"|trans }}</a>
         </div>
     </div>
-{% endblock %}
-
-{% block javascripts %}
-    {{ parent() }}
-    <script>
-        {% set mercure_topic = tournament.id|trans %}
-        const eventSource = new EventSource("{{ mercure( mercure_topic ,{ subscribe: mercure_topic }) }}", {
-            withCredentials: true
-        });
-        eventSource.onerror = error => {
-            console.log(error)
-        }
-        eventSource.onmessage = event => {
-            // Will be called every time an update is published by the server
-            let eventData = JSON.parse(event.data);
-            let data = eventData.data;
-            Push.create(data, {
-                body: eventData.content,
-                timeout: 5000,
-                vibrate: [100,200,100,200],
-                onClick: function () {
-                    window.focus();
-                    this.close();
-                },
-            })
-        }
-    </script>
 {% endblock %}

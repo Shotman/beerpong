@@ -4,6 +4,8 @@ namespace App\Twig\Runtime;
 
 use App\Entity\Tournament;
 use App\Service\ChallongeService;
+use App\Service\WebPushService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpKernel\KernelInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 use Twig\Extension\RuntimeExtensionInterface;
@@ -12,7 +14,8 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
 {
     public function __construct(private readonly KernelInterface $kernel,
                                 private readonly ChallongeService $challongeService,
-                                private CacheInterface $cacheRandom
+                                private CacheInterface $cacheRandom,
+                                private readonly WebPushService $webPushService,
     )
     {
         // Inject dependencies if needed
@@ -30,6 +33,10 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
         return $this->kernel->getContainer()->get('request_stack')->getCurrentRequest()->get('_route');
     }
 
+    private function getSession(){
+        return $this->kernel->getContainer()->get('request_stack')->getSession();
+    }
+
     public function tournamentIsStarted(Tournament $tournament){
         $extraData = $tournament->getExtraData();
         if(array_key_exists("state",$extraData)){
@@ -37,6 +44,12 @@ class AppExtensionRuntime implements RuntimeExtensionInterface
         }
         return false;
     }
+
+    public function userHasSubscribed(string $tournamentId){
+        $session = $this->getSession()->getId();
+        return $this->webPushService->hasSubscribed($session, $tournamentId);
+    }
+
 
     public function adminCreatedTournament($user,$tournament)
     {

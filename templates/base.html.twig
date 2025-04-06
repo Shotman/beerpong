@@ -40,7 +40,8 @@
                                 {{ app.user.username }} <span class="navbar-toggler-icon"></span>
                             </a>
                         {% else %}
-                        <a class="nav-link" href="{{ path("app_login") }}">Connexion</a>
+                        <a class="nav-link d-inline-block" href="{{ path("app_login") }}">Connexion</a>
+
                         {% endif %}
                     </li>
                 </ul>
@@ -60,11 +61,6 @@
                         <li class="nav-item">
                             <a class="nav-link" href="{{ url('app_logout') }}">{{ "Se déconnecter"|trans }}</a>
                         </li>
-                        {% if is_granted("ROLE_SUPER_ADMIN") %}
-                            <li class="nav-item">
-                                <a class="link-danger" onclick="setupNotifications()">Recevoir les notifications</a>
-                            </li>
-                        {% endif %}
                     </ul>
             </nav>
         </div>

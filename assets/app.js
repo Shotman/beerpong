@@ -45,14 +45,16 @@ const options = {
     applicationServerKey: "BBijTi82POzrkVulgdLriplyFZb7j4HwMM2XEYOhM4T9vQasrHlT3Y7hm504Zbhk-3-R0bElrWMOjY3zyJFJkHA",
 };
 
-const setupNotifications = async () => {
+const registerNotification = async (context) => {
     const permission = await Pushmatic.requestPermission();
     console.log(permission)
     if(permission === "granted") {
         Pushmatic.registerServiceWorker("/notificationSW.js")
             .then((registration) => Pushmatic.subscribeToPush(registration, options))
             .then(function (subscription) {
-                fetch("/registerWebPushSub", {
+                const body = JSON.stringify({"sub": subscription, "context": context});
+                window.localStorage.setItem("subNotificationSW"+context, body)
+                fetch("/tournaments/registerWebPushSub", {
                     method: "POST", // *GET, POST, PUT, DELETE, etc.
                     mode: "cors", // no-cors, *cors, same-origin
                     cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
@@ -62,13 +64,44 @@ const setupNotifications = async () => {
                     },
                     redirect: "follow", // manual, *follow, error
                     referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                    body: JSON.stringify(subscription), // le type utilisé pour le corps doit correspondre à l'en-tête "Content-Type"
+                    body: body, // le type utilisé pour le corps doit correspondre à l'en-tête "Content-Type"
                 });
             })
             .catch(console.error);
     }
 }
-window.setupNotifications = setupNotifications
+
+const unregisterNotification = (context) => {
+    const body = window.localStorage.getItem("subNotificationSW"+context);
+    fetch("/tournaments/unregisterWebPushSub", {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        mode: "cors", // no-cors, *cors, same-origin
+        cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+        credentials: "same-origin", // include, *same-origin, omit
+        headers: {
+            "Content-Type": "application/json",
+        },
+        redirect: "follow", // manual, *follow, error
+        referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+        body: body, // le type utilisé pour le corps doit correspondre à l'en-tête "Content-Type"
+    }).then((response) => {
+        window.localStorage.removeItem("subNotificationSW"+context)
+    })
+    ;
+}
+
+const toggleRegisterNotification = (context) => {
+    if(window.localStorage.getItem("subNotificationSW"+context) != null) {
+        unregisterNotification(context)
+    }
+    else{
+        registerNotification(context)
+    }
+}
+
+// window.setupNotifications = registerNotification;
+// window.unregisterNotification = unregisterNotification;
+window.toggleRegisterNotification = toggleRegisterNotification;
 
 //custom js imports
 import './js/accordion.js';

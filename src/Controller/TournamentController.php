@@ -9,12 +9,15 @@ use App\Repository\ChampionshipRepository;
 use App\Repository\PlayerRepository;
 use App\Repository\TournamentRepository;
 use App\Service\ChallongeService;
+use App\Service\WebPushService;
 use App\Structs\Team;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
+use Symfony\Component\Asset\Packages;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -29,12 +32,13 @@ use Symfony\Contracts\Cache\CacheInterface;
         ]
     )
 ]
-class TournamentController extends AbstractController
+class TournamentController extends BaseController
 {
     #[Route("/", name: "app_tournament_index", methods: ["GET"])]
     public function index(
         TournamentRepository $tournamentRepository,
-        Security $security
+        Security $security,
+        RequestStack $requestStack,
     ): Response {
         $seeAll = $this->isGranted("LIST_ALL_CHAMPIONSHIP_TOURNAMENT");
         $user = $security->getUser();
@@ -470,6 +474,32 @@ class TournamentController extends AbstractController
         return $this->renderBlock("global/partials.html.twig", "successAlert", [
             "message" => "Les équipes ont bien été sauvegardées",
         ]);
+    }
+
+    #[Route('/registerWebPushSub', name: 'app_tournament_registerWebPushSub', methods: ['POST'])]
+    function registerWebPushSub(RequestStack $requestStack, WebPushService $webPush): JsonResponse
+    {
+        $requestStack->getSession()->set("persist", true);
+        $content = $requestStack->getCurrentRequest()->getContent();
+        [$sub, $context] = array_values(json_decode($content, true));
+        $webPush->registerSubscription(["context" => $context, "content" => json_encode($sub)], $requestStack->getSession()->getId());
+        return new JsonResponse("OK");
+    }
+    #[Route('/unregisterWebPushSub', name: 'app_tournament_unregisterWebPushSub', methods: ['POST'])]
+    function unregisterWebPushSub(RequestStack $requestStack, WebPushService $webPush): JsonResponse
+    {
+        $requestStack->getSession()->set("persist", false);
+        $content = $requestStack->getCurrentRequest()->getContent();
+        [$sub, $context] = array_values(json_decode($content, true));
+        $webPush->unregisterSubscription(["context" => $context, "content" => json_encode($sub)], $requestStack->getSession()->getId());
+        return new JsonResponse("OK");
+    }
+
+    #[Route('/sendWebPush', name: 'app_tournament_sendWebPush')]
+    public function sendWebPush(RequestStack $request, WebPushService $webPush) {
+        $data = $request->getCurrentRequest()->request->all();
+        $webPush->sendPushNotification("DÉBUT DE MATCH",$data["team1"] . " VS " . $data["team2"],$data["tournament"]);
+        return new JsonResponse("OK");
     }
 
     private function getTournamentMatches(

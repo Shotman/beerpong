@@ -26,6 +26,7 @@ class AppExtension extends AbstractExtension
             new TwigFunction('tournamentIsStarted', [AppExtensionRuntime::class, 'tournamentIsStarted']),
             new TwigFunction('adminCreatedTournament', [AppExtensionRuntime::class, 'adminCreatedTournament']),
             new TwigFunction('adminCreatedChampionship', [AppExtensionRuntime::class, 'adminCreatedChampionship']),
+            new TwigFunction('userHasSubscribed', [AppExtensionRuntime::class, 'userHasSubscribed']),
         ];
     }
 }
