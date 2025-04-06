@@ -7,12 +7,19 @@ parameters:
     challonge_api_key: '%env(CHALLONGE_API_KEY)%'
     router.request_context.scheme: 'https'
     asset.request_context.secure: true
+    app:
+        webPush:
+            privateKey: '%env(resolve:WEBPUSH_PRIVATEKEY)%'
+            publicKey: '%env(resolve:WEBPUSH_PUBLICKEY)%'
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
 
+    app.service.web_push_service:
+        class: App\Service\WebPushService
+#        arguments: [ 'parameter_bag', '@cache', "@request_stack" ]
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:

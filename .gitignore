@@ -35,3 +35,7 @@ yarn-error.log
 /.run/
 /.run/*
 .phpactor.json
+
+###> sensiolabs/minify-bundle ###
+/var/minify/
+###< sensiolabs/minify-bundle ###

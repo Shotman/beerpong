@@ -10,6 +10,8 @@ framework:
                 adapter: cache.adapter.filesystem
             challonge.cache:
                 adapter: cache.adapter.filesystem
+            webPush.cache:
+                adapter: cache.adapter.filesystem
     # Enables session support. Note that the session will ONLY be started if you read or write from it.
     # Remove or comment this section to explicitly disable session support.
     session:

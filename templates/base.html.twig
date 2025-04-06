@@ -36,7 +36,9 @@
                 <ul class="d-flex navbar-nav">
                     <li class="nav-item">
                         {% if app.user is not same as(null) %}
-                        <a class="nav-link" href="{{ path('app_logout') }}">{{ app.user.username }}</a>
+                            <a style="cursor: pointer;" class="nav-link py-2 px-0 px-lg-2" data-bs-toggle="offcanvas" data-bs-target="#offcanvasMenu" aria-controls="offcanvasMenu">
+                                {{ app.user.username }} <span class="navbar-toggler-icon"></span>
+                            </a>
                         {% else %}
                         <a class="nav-link" href="{{ path("app_login") }}">Connexion</a>
                         {% endif %}
@@ -46,6 +48,28 @@
         </div>
     </nav>
 </header>
+{% if app.user is not same as(null) %}
+    <div data-bs-theme="dark" class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasMenu" data-bs-backdrop="false" aria-labelledby="offcanvasMenuLabel">
+        <div class="offcanvas-header">
+            <h5 class="offcanvas-title" id="offcanvasMenuLabel">Menu</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <nav class="navbar navbar-expand-lg navbar-dark">
+                    <ul class="navbar-nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url('app_logout') }}">{{ "Se déconnecter"|trans }}</a>
+                        </li>
+                        {% if is_granted("ROLE_SUPER_ADMIN") %}
+                            <li class="nav-item">
+                                <a class="link-danger" onclick="setupNotifications()">Recevoir les notifications</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+            </nav>
+        </div>
+    </div>
+{% endif %}
 <main class="flex-grow-1">
     <div id="bodyViewContainer" class="container-fluid h-100 d-flex justify-content-center align-items-center">
         {% block body %}{% endblock %}

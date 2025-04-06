@@ -82,4 +82,10 @@ return [
     'htmx-ext-sse' => [
         'version' => '2.2.3',
     ],
+    'pushmatic' => [
+        'version' => '1.0.1',
+    ],
+    'bootstrap/dist/js/bootstrap.bundle.min.js' => [
+        'version' => '5.3.5',
+    ],
 ];

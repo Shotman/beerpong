@@ -26,6 +26,9 @@
             "./migrations/.gitignore"
         ]
     },
+    "minishlink/web-push-bundle": {
+        "version": "v6.2.0"
+    },
     "nelmio/cors-bundle": {
         "version": "2.5",
         "recipe": {
@@ -50,6 +53,18 @@
             "./.env.test",
             "./phpunit.xml.dist",
             "./tests/bootstrap.php"
+        ]
+    },
+    "sensiolabs/minify-bundle": {
+        "version": "1.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "0.9",
+            "ref": "e2583c294ba6615da8bedff18a8dbf55e4562a6d"
+        },
+        "files": [
+            "config/packages/sensiolabs_minify.yaml"
         ]
     },
     "symfony/asset-mapper": {
@@ -240,7 +255,7 @@
             "ref": "05c45071c7ecacc1e48f94bc43c1f8d4405fb2b2"
         },
         "files": [
-            "./assets/bootstrap.js",
+            "./assets/init.js",
             "./assets/controllers.json",
             "./assets/controllers/hello_controller.js"
         ]
