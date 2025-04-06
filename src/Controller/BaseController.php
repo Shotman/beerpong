@@ -13,6 +13,5 @@ class BaseController extends AbstractController
             $requestStack->getSession()->start();
             $requestStack->getSession()->has("persist");
         }
-        dump($requestStack->getSession()->getId());
     }
 }
