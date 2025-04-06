@@ -45,24 +45,28 @@ const options = {
     applicationServerKey: "BBijTi82POzrkVulgdLriplyFZb7j4HwMM2XEYOhM4T9vQasrHlT3Y7hm504Zbhk-3-R0bElrWMOjY3zyJFJkHA",
 };
 
-const setupNotifications = () => {
-    Pushmatic.registerServiceWorker("/notificationSW.js")
-        .then((registration) => Pushmatic.subscribeToPush(registration, options))
-        .then(function(subscription){
-            fetch("/registerWebPushSub", {
-                method: "POST", // *GET, POST, PUT, DELETE, etc.
-                mode: "cors", // no-cors, *cors, same-origin
-                cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
-                credentials: "same-origin", // include, *same-origin, omit
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                redirect: "follow", // manual, *follow, error
-                referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-                body: JSON.stringify(subscription), // le type utilisé pour le corps doit correspondre à l'en-tête "Content-Type"
-            });
-        })
-        .catch(console.error);
+const setupNotifications = async () => {
+    const permission = await Pushmatic.requestPermission();
+    console.log(permission)
+    if(permission === "granted") {
+        Pushmatic.registerServiceWorker("/notificationSW.js")
+            .then((registration) => Pushmatic.subscribeToPush(registration, options))
+            .then(function (subscription) {
+                fetch("/registerWebPushSub", {
+                    method: "POST", // *GET, POST, PUT, DELETE, etc.
+                    mode: "cors", // no-cors, *cors, same-origin
+                    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+                    credentials: "same-origin", // include, *same-origin, omit
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    redirect: "follow", // manual, *follow, error
+                    referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+                    body: JSON.stringify(subscription), // le type utilisé pour le corps doit correspondre à l'en-tête "Content-Type"
+                });
+            })
+            .catch(console.error);
+    }
 }
 window.setupNotifications = setupNotifications
 
