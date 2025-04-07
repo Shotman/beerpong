@@ -3,15 +3,15 @@
 namespace App\Service;
 
 use AllowDynamicProperties;
+use App\Repository\TournamentRepository;
 use Minishlink\WebPush\Subscription;
 use Minishlink\WebPush\WebPush;
 use Psr\Cache\InvalidArgumentException;
-use Symfony\Component\Asset\Package;
-use Symfony\Component\Asset\PackageInterface;
 use Symfony\Component\Asset\Packages;
-use Symfony\Component\Asset\UrlPackage;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Contracts\Cache\CacheInterface;
 
 #[AllowDynamicProperties] class WebPushService
@@ -23,9 +23,11 @@ use Symfony\Contracts\Cache\CacheInterface;
      * @throws InvalidArgumentException
      */
     public function __construct(private readonly ParameterBagInterface $parameterBag,
-                                private readonly CacheInterface $webpushCache,
-                                private readonly RequestStack $requestStack,
-                                private readonly Packages $packageInterface,
+                                private readonly CacheInterface        $webpushCache,
+                                private readonly RequestStack          $requestStack,
+                                private readonly Packages              $packageInterface,
+                                private readonly TournamentRepository  $tournamentRepository,
+                                private readonly RouterInterface       $router,
     )
     {
         $this->webpushCache->get('subscriptions', function ($item){
@@ -47,7 +49,11 @@ use Symfony\Contracts\Cache\CacheInterface;
                 'privateKey' => $this->parameterBag->get('app')["webPush"]["privateKey"], // (recommended) in fact the secret multiplier of the private key encoded in Base64-URL
             ],
         ];
-        $webPush = new WebPush($auth);
+        $options = [
+            "TTL" => 43200,
+            "urgency" => "high"
+        ];
+        $webPush = new WebPush($auth, $options);
         $webPush->setReuseVAPIDHeaders(true);
         $this->webPush = $webPush;
     }
@@ -87,15 +93,19 @@ use Symfony\Contracts\Cache\CacheInterface;
     public function sendPushNotification(string $title, string $content, string $context)
     {
         $iconUrl = join("",[$this->requestStack->getMainRequest()->getSchemeAndHttpHost(),$this->packageInterface->getUrl('images/notification_icon.png')]);
+        $badgeUrl = join("",[$this->requestStack->getMainRequest()->getSchemeAndHttpHost(),$this->packageInterface->getUrl('images/notification_badge.jpg')]);
         $subscriptions = $this->getSubscriptions($context);
+        $tournament = $this->tournamentRepository->findOneBy(["challongeId" => $context]);
+        $tournamentRoute = $this->router->generate("app_tournament_show", ["id" => $tournament->getId()], UrlGeneratorInterface::ABSOLUTE_URL);
         $webPush = $this->webPush;
-        dump($subscriptions);
         foreach ($subscriptions as $subscription) {
             $webPush->queueNotification($subscription,json_encode(
                 [
                     "title" => $title,
                     "content" => $content,
                     "icon" => $iconUrl,
+                    "badge" => $badgeUrl,
+                    "url" => $tournamentRoute,
                 ]
             ));
         }

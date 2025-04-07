@@ -47,7 +47,6 @@ const options = {
 
 const registerNotification = async (context) => {
     const permission = await Pushmatic.requestPermission();
-    console.log(permission)
     if(permission === "granted") {
         Pushmatic.registerServiceWorker("/notificationSW.js")
             .then((registration) => Pushmatic.subscribeToPush(registration, options))
