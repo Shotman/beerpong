@@ -1,18 +1,29 @@
 import './init.js';
 
 //3rd party libraries
-import 'bootstrap/dist/js/bootstrap.bundle.min.js'
-import * as bs5dialog from "@ymlluo/bs5dialog/dist/bs5dialog.js";
+import "jquery";
+import $ from "jquery";
+import 'bootstrap'
+import * as bootstrap from 'bootstrap';
+import _hyperscript from  "hyperscript.org";
+window.jQuery = $
+window.$ = $;
+window.bootstrap = bootstrap;
 import { Datepicker } from 'vanillajs-datepicker';
 import fr from 'vanillajs-datepicker/locales/fr';
 import htmx from 'htmx.org';
 import Pushmatic from 'pushmatic';
 window.Pushmatic = Pushmatic;
+import * as bs5dialog from '@ymlluo/bs5dialog/dist/bs5dialog.js'
 window.bs5dialog = bs5dialog
+import 'bootstrap-table'
 window.htmx = htmx
+jQuery.noConflict();
 
 bs5dialog.startup();
-bs5dialog.i18n.setCurrentLang('fr-FR');
+bs5dialog.setSystemLang("fr-FR");
+_hyperscript.browserInit();
+
 Object.assign(Datepicker.locales, fr);
 document.addEventListener('DOMContentLoaded', function () {
     document.querySelectorAll('input[type="text"].datepicker-input').forEach((input) => {
@@ -21,6 +32,8 @@ document.addEventListener('DOMContentLoaded', function () {
             buttonClass: 'btn',
         });
     });
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
 })
 
 //htmx confirm override
@@ -38,7 +51,18 @@ document.addEventListener("htmx:confirm", function(e) {
     })
 })
 
+document.body.addEventListener("hx-showModal", function(evt){
+    setTimeout(function(e){
+        let modal
+        modal = new Modal(e.detail.value)
+        modal.show()
+    },10,evt)
+})
 
+document.body.addEventListener("hx-hideModal", function(evt){
+    let modal = document.querySelector(evt.detail.value)
+    modal.querySelector(".btn-close").click()
+})
 
 const options = {
     userVisibleOnly: true,
@@ -110,4 +134,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap-icons/font/bootstrap-icons.min.css";
 import "vanillajs-datepicker/dist/css/datepicker-bs5.min.css";
 import "@ymlluo/bs5dialog/dist/bs5dialog.css";
+import "bootstrap-table/dist/bootstrap-table.min.css";
 import './styles/app.css';
+import {Modal} from "bootstrap";
+import e from "vanillajs-datepicker/locales/fr";

@@ -25,8 +25,7 @@ class IndexController extends BaseController
                     $championship
                 );
             }
-        );
-
+        );;
         $commingTournaments = array_filter(
             $tournamentRepository->getCommingTournaments(),
             function ($tournament) {
@@ -39,7 +38,6 @@ class IndexController extends BaseController
         return $this->render("index/index.html.twig", [
             "activeChampionships" => $activeChampionships,
             "commingTournaments" => $commingTournaments,
-            "controller_name" => "IndexController",
         ]);
     }
 }

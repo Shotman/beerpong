@@ -30,25 +30,22 @@ class CreatorVoter extends Voter
         $user = $token->getUser();
         $response = false;
         // if the user is anonymous, do not grant access
-        if (!$user instanceof UserInterface) {
-            return false;
-        }
-        if(in_array("ROLE_SUPER_ADMIN",$user->getRoles()))
+        if(!is_null($user) && in_array("ROLE_SUPER_ADMIN",$user->getRoles()))
             return true;
         // ... (check conditions and return true to grant permission) ...
         switch ($attribute) {
             case self::DELETE:
             case self::EDIT:
-                $response = $this->isRightUserForSubject($user,$subject);
+                $response = !is_null($user) && $this->isRightUserForSubject($user,$subject);
             break;
             case self::VIEW:
-                $response = $subject->isPublic() || $this->isRightUserForSubject($user,$subject);
+                $response = $subject->isPublic() || (!is_null($user) && $this->isRightUserForSubject($user,$subject));
                 break;
             case self::CREATE:
-                $response = in_array("ROLE_ADMIN",$user->getRoles());
+                $response = !is_null($user) && in_array("ROLE_ADMIN",$user->getRoles());
                 break;
             case self::LIST_ALL:
-                $response = in_array("ROLE_SUPER_ADMIN",$user->getRoles());
+                $response = !is_null($user) && in_array("ROLE_SUPER_ADMIN",$user->getRoles());
                 break;
         }
         return $response;

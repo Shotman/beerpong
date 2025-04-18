@@ -3,9 +3,9 @@
 {% block title %}{{ "tournament.tournaments"|trans }}{% endblock %}
 
 {% block body %}
-    <div class="align-self-start container-fluid ">
+    <div class="align-self-start container-fluid table-responsive">
         <h1>{{ "tournament.list"|trans }}</h1>
-        <table class="table table-striped text-center">
+        <table data-toggle="table" data-search="true" class="table table-striped text-center ">
             <thead>
             <tr>
                 <th>{{ "tournament.name"|trans }}</th>

@@ -33,13 +33,13 @@ return [
         'version' => '1.3.4',
     ],
     'bootstrap' => [
-        'version' => '5.3.3',
+        'version' => '5.3.5',
     ],
     '@popperjs/core' => [
         'version' => '2.11.8',
     ],
     'bootstrap/dist/css/bootstrap.min.css' => [
-        'version' => '5.3.3',
+        'version' => '5.3.5',
         'type' => 'css',
     ],
     'vanillajs-datepicker/dist/css/datepicker-bs5.min.css' => [
@@ -50,18 +50,18 @@ return [
         'version' => '1.3.4',
     ],
     'htmx.org' => [
-        'version' => '2.0.4',
+        'version' => '^2.0.2',
     ],
     'bootstrap-icons/font/bootstrap-icons.min.css' => [
         'version' => '1.11.3',
         'type' => 'css',
     ],
     '@ymlluo/bs5dialog/dist/bs5dialog.css' => [
-        'version' => '1.0.11',
+        'version' => '1.0.12',
         'type' => 'css',
     ],
     '@ymlluo/bs5dialog/dist/bs5dialog.js' => [
-        'version' => '1.0.11',
+        'version' => '1.0.12',
     ],
     'push.js' => [
         'version' => '1.0.12',
@@ -87,5 +87,18 @@ return [
     ],
     'bootstrap/dist/js/bootstrap.bundle.min.js' => [
         'version' => '5.3.5',
+    ],
+    'bootstrap-table' => [
+        'version' => '1.24.1',
+    ],
+    'jquery' => [
+        'version' => '3.7.1',
+    ],
+    'bootstrap-table/dist/bootstrap-table.min.css' => [
+        'version' => '1.24.1',
+        'type' => 'css',
+    ],
+    'hyperscript.org' => [
+        'version' => '0.9.14',
     ],
 ];

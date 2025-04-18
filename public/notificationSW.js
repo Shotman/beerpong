@@ -1,4 +1,4 @@
-const focustOrOpenUrl = (event) => {
+const focusOrOpenUrl = (event) => {
     event.waitUntil(
         clients.matchAll({includeUncontrolled: true}).then( windowClients => {
             // Check if there is already a window/tab open with the target URL
@@ -30,9 +30,11 @@ self.addEventListener("push", function (event) {
 self.addEventListener(
     "notificationclick",
     function (event) {
+        event.notification.close();
+        focusOrOpenUrl(event, event.notification.data.url);
         switch (event.action) {
             case "open_url":
-                focustOrOpenUrl(event, event.notification.data.url);  // Which we got from above
+                focusOrOpenUrl(event, event.notification.data.url);  // Which we got from above
                 break;
         }
     },

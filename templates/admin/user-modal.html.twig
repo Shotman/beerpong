@@ -1,0 +1,15 @@
+    <div class="modal-dialog htmxModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="userModalLabel">Modifier</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div id="userModal-content" class="modal-body">
+                {{ form(form) }}
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fermer</button>
+                <button form="user-edit-form" type="submit" class="btn btn-primary">Valider</button>
+            </div>
+        </div>
+    </div>

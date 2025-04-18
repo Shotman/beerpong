@@ -1,0 +1,54 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello AdminController!{% endblock %}
+
+{% block body %}
+<div class="align-self-start container-fluid mt-3">
+    <button class="btn btn-outline-success mb-2" href="#" hx-swap="innerHTML" hx-target="#userModal" hx-get="{{ path('app_admin_user_modal') }}">Créer un utilisateur</button>
+    <table id="usersTable" class="table table-responsive table-striped table-hover table-bordered">
+        {% block userTable %}
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Identifiant</th>
+                <th scope="col">Rôle</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.userIdentifier }}</td>
+                <td>{{ user.roles|join(', ') }}</td>
+                <td>
+                    <div class="btn-group align-end" role="group" aria-label="actions">
+                        <button type="button" hx-swap="innerHTML" hx-target="#userModal" hx-get="{{ path('app_admin_user_modal', { "user": user.id } ) }}" class="btn btn-primary">Editer</button>
+                        <button type="button" hx-confirm="Voulez-vous supprimer cet utilisateur ?" hx-delete="{{ path('app_admin_user_modal', { "user": user.id }) }}" class="btn btn-danger">Supprimer</button>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        {% endblock %}
+    </table>
+    <div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="userModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="userModalLabel">Modal title</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div id="userModal-content" class="modal-body">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+{% endblock %}
